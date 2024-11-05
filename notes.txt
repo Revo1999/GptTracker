@@ -1,0 +1,109 @@
+// manifest.json
+{
+  "manifest_version": 3,
+  "name": "ChatGPT Message Counter",
+  "version": "1.0",
+  "description": "Counts messages sent to ChatGPT",
+  "permissions": ["activeTab"],
+  "content_scripts": [
+    {
+      "matches": ["https://chat.openai.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
+
+// content.js
+let messageCount = {
+  count: 0,
+  lastUpdated: new Date().toISOString()
+};
+
+// Load stored count from localStorage
+const storedData = localStorage.getItem('chatgptMessageCount');
+if (storedData) {
+  messageCount = JSON.parse(storedData);
+}
+
+document.addEventListener('keydown', function(event) {
+  // Check if we're on chat.openai.com
+  if (!window.location.hostname.includes('chat.openai.com')) return;
+  
+  // Check if the active element is the chat input
+  const isTextArea = event.target.tagName.toLowerCase() === 'textarea';
+  if (!isTextArea) return;
+  
+  // Check for Enter press without Shift
+  if (event.key === 'Enter' && !event.shiftKey) {
+    messageCount.count++;
+    messageCount.lastUpdated = new Date().toISOString();
+    
+    // Store updated count
+    localStorage.setItem('chatgptMessageCount', JSON.stringify(messageCount));
+    
+    // Send message count to popup
+    chrome.runtime.sendMessage({
+      type: 'updateCount',
+      data: messageCount
+    });
+  }
+});
+
+// popup.html
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      width: 200px;
+      padding: 10px;
+      font-family: Arial, sans-serif;
+    }
+    .counter {
+      font-size: 24px;
+      text-align: center;
+      margin: 10px 0;
+    }
+    .last-updated {
+      font-size: 12px;
+      color: #666;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="counter">Messages Sent: <span id="count">0</span></div>
+  <div class="last-updated">Last updated: <span id="lastUpdated">Never</span></div>
+  <script src="popup.js"></script>
+</body>
+</html>
+
+// popup.js
+document.addEventListener('DOMContentLoaded', function() {
+  // Get stored count from localStorage
+  const countElement = document.getElementById('count');
+  const lastUpdatedElement = document.getElementById('lastUpdated');
+  
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    if (tabs[0].url.includes('chat.openai.com')) {
+      chrome.tabs.sendMessage(tabs[0].id, {type: 'getCount'}, function(response) {
+        if (response) {
+          countElement.textContent = response.count;
+          lastUpdatedElement.textContent = new Date(response.lastUpdated).toLocaleString();
+        }
+      });
+    }
+  });
+});
+
+// Listen for count updates from content script
+chrome.runtime.onMessage.addListener(function(message) {
+  if (message.type === 'updateCount') {
+    document.getElementById('count').textContent = message.data.count;
+    document.getElementById('lastUpdated').textContent = 
+      new Date(message.data.lastUpdated).toLocaleString();
+  }
+});
