@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "ChatGPT Message Counter",
+  "name": "Track-GPT",
   "version": "1.0",
   "description": "Counts messages sent to ChatGPT",
   "permissions": [
