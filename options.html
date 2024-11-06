@@ -1,78 +1,137 @@
 <!DOCTYPE html>
 <html>   
 <head>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <title>Track-GPT Settings</title>
     <style>
+        /* Dark mode body styling */
         body {
             width: 100%;
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
-            font-family: "Inter";
+            font-family: 'Inter', sans-serif;
+            background-color: #1e1e1e;
+            color: #e3e3e3;
+            line-height: 1.6;
         }
+
+        /* Main container styling */
         .container {
-            background-color: #f5f5f5;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
+            background-color: #2c2c2f;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.4);
             text-align: center;
-            margin-bottom: 30px;
         }
+
+        /* Headers */
+        h1 {
+            color: #e3e3e3;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        h2, h3 {
+            font-size: 18px;
+            font-weight: 500;
+            color: #b3b3b3;
+            margin-top: 16px;
+        }
+        h5 {
+            font-size: 14px;
+            color: #8a8a8a;
+            margin-top: 12px;
+        }
+
+        /* Stats section */
         .stats {
             margin-bottom: 20px;
-            padding: 15px;
-            background-color: white;
-            border-radius: 4px;
+            padding: 16px;
+            background-color: #3a3a3d;
+            border-radius: 8px;
+            border: 1px solid #4a4a4f;
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
         }
+
+        /* Reset buttons */
         .reset-button {
-            display: block;
-            width: 200px;
-            margin: 20px auto;
+            display: inline-block;
+            width: 220px;
+            margin: 12px;
             padding: 10px;
-            background-color: #dc3545;
+            background-color: #e53935;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: background-color 0.3s;
         }
         .reset-button:hover {
-            background-color: #c82333;
+            background-color: #d32f2f;
         }
+
+        /* Dropdown */
         .location-select {
-            margin: 20px 0;
+            margin-top: 16px;
             padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
+            border-radius: 6px;
+            border: 1px solid #4a4a4f;
             width: 100%;
-            font-size: 16px;
+            font-size: 15px;
+            background-color: #2c2c2f;
+            color: #e3e3e3;
+        }
+        .location-select option {
+            background-color: #2c2c2f;
+            color: #e3e3e3;
+        }
+
+        /* Credits */
+        .credits {
+            font-size: 12px;
+            color: #8a8a8a;
+            margin-top: 24px;
+        }
+
+        /* Link styling */
+        a {
+            color: #8ab4f8;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Track-GPT Settings</h1>
+        
         <div class="stats">
             <h2>Current Statistics</h2>
-            <p>Total Water Used: <span id="water_count">0</span></p>
-            <p>Total Messages: <span id="count">0</span></p>
-            <p>Last Updated: <span id="lastUpdated">Never</span></p>
+            <h3>Weekly</h3>
+            <p>Water Used: <span id="weekly_water_count">0 ml</span></p>
+            <p>Messages: <span id="weekly_count">0</span></p>
+            <h3>Total</h3>
+            <p>Water Used: <span id="water_count">0 ml</span></p>
+            <p>Messages: <span id="count">0</span></p>
+            <h5>Last Updated: <span id="lastUpdated">Never</span></h5>
         </div>
-        <button id="resetButton" class="reset-button">Reset Counter</button>
+
+        <button id="resetButton" class="reset-button">Reset Total Count</button>
+        <button id="resetWeeklyButton" class="reset-button">Reset Weekly Count</button>
         
-        <h2>Choose Location:</h2> <!-- New Title -->
-            <p>
-                Please select your location from the dropdown menu below to get the most accurate water usage estimate!
-                Estimates are based on GPT3-model data from 
-                <a href="https://arxiv.org/abs/2304.03271" target="_blank" rel="noopener noreferrer">
-                    Making AI Less "Thirsty": Uncovering and Addressing the Secret Water Footprint of AI Models* (Li, Yang, Islam, Ren)
-                </a>
-            </p>
+        <h2>Choose Location:</h2>
+        <p>
+            Please select your location from the dropdown menu below to get the most accurate water usage estimate!
+            Estimates are based on GPT-3 model data from 
+            <a href="https://arxiv.org/abs/2304.03271" target="_blank" rel="noopener noreferrer">
+                Making AI Less "Thirsty": Uncovering and Addressing the Secret Water Footprint of AI Models* (Li, Yang, Islam, Ren)
+            </a>.
+        </p>
         
         <select id="locationSelect" class="location-select">
             <option value="" disabled>Select a location</option>

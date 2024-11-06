@@ -1,0 +1,10 @@
+.info-box {
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-right: 10px; /* Plads mellem boksen og knappen */
+    display: inline-block; /* Gør boksen inline for bedre placering */
+    position: relative; /* For mere kontrol over placeringen */
+    z-index: 1000; /* Sørg for, at boksen vises ovenfor andre elementer */
+}
