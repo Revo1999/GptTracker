@@ -183,6 +183,27 @@ function updateCount() {
   weeklyMessageCount.count++;
   localStorage.setItem('chatgptWeeklyMessageCount', JSON.stringify(weeklyMessageCount));
   console.log('Weekly message counted! New weekly count:', weeklyMessageCount.count);
+
+  
+  let weeklylimitdata;
+  let locationselecteddata; 
+
+
+  chrome.storage.local.get('weeklyLimit', (data) => {
+    weeklylimitdata = data.weeklyLimit;
+  
+    chrome.storage.local.get('locationSelected', (data) => {
+      locationselecteddata = data.locationSelected;
+  
+      console.log(locationselecteddata);
+      console.log(weeklyMessageCount.count);
+      document.querySelector('.water-text').textContent = 
+      `${"Water consumed: " + (locationselecteddata * weeklyMessageCount.count).toFixed(2) + " mL"}`
+     
+    });
+  });
+
+
 }
 
 window.addEventListener('keydown', function(event) {
@@ -233,6 +254,7 @@ window.testCounter = function() {
 console.log('=== ChatGPT Counter Ready !!!');
 
 function initializeObserver() {
+
   const observer = new MutationObserver(() => {
       const shareButton = document.querySelector('[data-testid="profile-button"]');
       
@@ -240,11 +262,31 @@ function initializeObserver() {
       if (shareButton && !document.querySelector('.water-pill')) {
           const waterDiv = document.createElement('div');
           
-          const waterIndicator = new WaterIndicator(waterDiv, messageCount.count);
+          const waterIndicator = new WaterIndicator(waterDiv, "1");
+          
           
           shareButton.parentNode.insertBefore(waterDiv, shareButton);
           console.log("Water indicator injected");
+
+          let weeklylimitdata;
+          let locationselecteddata; 
+        
+        
+          chrome.storage.local.get('weeklyLimit', (data) => {
+            weeklylimitdata = data.weeklyLimit;
           
+            chrome.storage.local.get('locationSelected', (data) => {
+              locationselecteddata = data.locationSelected;
+          
+              console.log(locationselecteddata);
+              console.log(weeklyMessageCount.count);
+              document.querySelector('.water-text').textContent = 
+              `${"Water consumed: " + (locationselecteddata * weeklyMessageCount.count).toFixed(2) + " mL"}`
+             
+            });
+          });
+
+
           window.waterIndicator = waterIndicator;
       }
   });

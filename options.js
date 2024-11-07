@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const resetButton = document.getElementById('resetButton');
     const resetWeeklyButton = document.getElementById('resetWeeklyButton');
     const selectElement = document.getElementById('locationSelect');
+    const waterLimitInput = document.getElementById('waterLimitInput');
 
     function updateDisplay() {
         chrome.tabs.query({}, (tabs) => {
@@ -134,10 +135,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function saveWaterLimit() {
+        const waterLimit = waterLimitInput.value;
+        localStorage.setItem('waterLimit', waterLimit);
+    }
+
+    function loadWaterLimit() {
+        const savedWaterLimit = localStorage.getItem('waterLimit');
+        if (savedWaterLimit) {
+            waterLimitInput.value = savedWaterLimit;
+        }
+    }
+
     window.onload = function() {
         loadLocation();
+        loadWaterLimit();
+        saveLocation()
+
+        chrome.storage.local.set({weeklyLimit: localStorage.getItem('waterLimit')})
+        chrome.storage.local.set({locationSelected: localStorage.getItem('selectedLocation')})
     };
 
     document.getElementById('locationSelect').addEventListener('change', saveLocation);
+    waterLimitInput.addEventListener('change', saveWaterLimit);
+
     updateDisplay();
 });
