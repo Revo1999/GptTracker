@@ -1,5 +1,124 @@
 console.log('=== ChatGPT Counter Extension Starting ===');
 
+// JS class for the water indicator html element to inject
+class WaterIndicator {
+  constructor(container, value) {
+      this.container = container;
+      this.value = value;
+      this.render();
+  }
+
+  createStyles() {
+      const style = document.createElement('style');
+      style.textContent = `
+          .water-pill {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              background-color: #212121;
+              border: 1px solid #424242;
+              padding: 8px 12px;
+              border-radius: 100px;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+              width: 248px;
+              height: 40px;
+              box-sizing: border-box;
+          }
+
+          .water-text {
+              color: white;
+              font-family: system-ui, -apple-system, sans-serif;
+              font-size: 14px;
+              font-weight: 600;
+          }
+
+          .water-circle-container {
+              width: 36px;
+              height: 36px;
+              flex-shrink: 0;
+              position: relative;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transform: translateX(10px)
+          }
+
+          .circle-svg {
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+          }
+
+          .circle-svg-back {
+              z-index: 0;
+          }
+
+          .circle-svg-front {
+              z-index: 1;
+          }
+
+          .fish {
+          position: absolute;
+          width: 20 px;
+          height: 20 px;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 2;
+      }
+      `;
+      document.head.appendChild(style);
+  }
+
+  createCircleSVGs() {
+      return {
+          back: `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 36 36" fill="none" class="circle-svg circle-svg-back">
+                   <circle cx="18" cy="18" r="18" fill="#F4F4F4"/>
+                 </svg>`,
+          front: `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 34 34" fill="none" class="circle-svg circle-svg-front">
+                    <circle cx="17" cy="16.9999" r="16.9091" fill="#89BCFF" fill-opacity="0.5"/>
+                  </svg>`
+      };
+  }
+
+  render() {
+      this.createStyles();
+
+      const pill = document.createElement('div');
+      pill.className = 'water-pill';
+
+      const text = document.createElement('div');
+      text.className = 'water-text';
+      text.textContent = `Water consumed: ${this.value} mL`;
+
+      const circleContainer = document.createElement('div');
+      circleContainer.className = 'water-circle-container';
+      
+      // Insert both SVG circles
+      const svgs = this.createCircleSVGs();
+      circleContainer.innerHTML = svgs.back + svgs.front;
+
+      // Add PNG image
+      const waterIcon = document.createElement('img');
+      waterIcon.className = 'fish';
+      waterIcon.src = chrome.runtime.getURL('fish.png');
+      waterIcon.alt = 'fish icon';
+      circleContainer.appendChild(waterIcon);
+
+      pill.appendChild(text);
+      pill.appendChild(circleContainer);
+
+      this.container.appendChild(pill);
+  }
+
+  update(newValue) {
+      this.value = newValue;
+      const text = this.container.querySelector('.water-text');
+      text.textContent = `Water consumed: ${this.value} mL`;
+  }
+}
+
 chrome.runtime.sendMessage({ type: "showNotification" }, (response) => {
   console.log(response.status);
 });
@@ -56,7 +175,10 @@ function updateCount() {
   localStorage.setItem('chatgptMessageCount', JSON.stringify(messageCount));
   console.log('Message counted! New count:', messageCount.count);
 
-  // Update weekly count
+  if (window.waterIndicator) {
+      window.waterIndicator.update(messageCount.count);
+  }
+
   checkAndResetWeeklyCount();
   weeklyMessageCount.count++;
   localStorage.setItem('chatgptWeeklyMessageCount', JSON.stringify(weeklyMessageCount));
@@ -114,19 +236,23 @@ function initializeObserver() {
   const observer = new MutationObserver(() => {
       const shareButton = document.querySelector('[data-testid="profile-button"]');
       
-      if (shareButton && !document.querySelector('.info-box')) {
-          const infoBox = document.createElement('div');
-          infoBox.textContent = "Here is our banner!";
-          infoBox.classList.add('info-box');
-          shareButton.parentNode.insertBefore(infoBox, shareButton);
-          console.log("Button not found, infographics injected");
+      //create html div element for water indicator
+      if (shareButton && !document.querySelector('.water-pill')) {
+          const waterDiv = document.createElement('div');
+          
+          const waterIndicator = new WaterIndicator(waterDiv, messageCount.count);
+          
+          shareButton.parentNode.insertBefore(waterDiv, shareButton);
+          console.log("Water indicator injected");
+          
+          window.waterIndicator = waterIndicator;
       }
   });
 
   if (document.body) {
       observer.observe(document.body, { childList: true, subtree: true });
   } else {
-      console.error("document.body er ikke tilgængelig.");
+      console.error("document.body is not available.");
   }
 }
 
