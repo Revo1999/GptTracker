@@ -20,7 +20,7 @@ class WaterIndicator {
               padding: 8px 12px;
               border-radius: 100px;
               box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-              width: 248px;
+              width: 300px;
               height: 40px;
               box-sizing: border-box;
           }
@@ -33,7 +33,7 @@ class WaterIndicator {
           }
 
           .water-circle-container {
-              width: 36px;
+              width: 50px;
               height: 36px;
               flex-shrink: 0;
               position: relative;
@@ -194,11 +194,15 @@ function updateCount() {
   
     chrome.storage.local.get('locationSelected', (data) => {
       locationselecteddata = data.locationSelected;
-  
+      
+
+      let totalML = (locationselecteddata * weeklyMessageCount.count).toFixed(2);
+      let output = totalML > 1000 ? (totalML / 1000).toFixed(2) + " L" : totalML + " mL";
+
       console.log(locationselecteddata);
       console.log(weeklyMessageCount.count);
       document.querySelector('.water-text').textContent = 
-      `${"Water consumed: " + (locationselecteddata * weeklyMessageCount.count).toFixed(2) + " mL"}`
+      `${"Water consumed: " + output}`
      
     });
   });
@@ -277,11 +281,12 @@ function initializeObserver() {
           
             chrome.storage.local.get('locationSelected', (data) => {
               locationselecteddata = data.locationSelected;
+
+              let totalML = (locationselecteddata * weeklyMessageCount.count).toFixed(2);
+              let output = totalML > 1000 ? (totalML / 1000).toFixed(2) + " L" : totalML + " mL";
           
-              console.log(locationselecteddata);
-              console.log(weeklyMessageCount.count);
               document.querySelector('.water-text').textContent = 
-              `${"Water consumed: " + (locationselecteddata * weeklyMessageCount.count).toFixed(2) + " mL"}`
+              `${"Water consumed: " + (output)}`
              
             });
           });

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            background: #000;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+.circle-container {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 5px solid white;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    background: white; /* Add this line to make the background white */
+}
+        
+        .water-content {
+            position: absolute;
+            width: 100%;
+            height: 150%;
+            background: transparent;
+        }
+        
+        .water {
+            position: absolute;
+            left: -20%;
+            width: 140%;
+            height: 100%; /* Increased from 100% to 150% */
+            background:  #bed7f9;
+            animation: animate 4s ease-in-out infinite;
+            transition: transform 0.3s ease;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+        
+        .slider {
+            width: 200px;
+            -webkit-appearance: none;
+            height: 10px;
+            border-radius: 5px;
+            background: #333;
+            outline: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #1e90ff;
+            cursor: pointer;
+        }
+        
+@keyframes animate {
+    0%, 100% {
+        clip-path: path('M0 45 C40 44 80 50 160 60 C240 70 280 59 400 52 L400 400 L0 400 Z');
+    }
+    50% {
+        clip-path: path('M0 60 C40 65 80 66 160 62 C240 50 280 45 400 46 L400 400 L0 400 Z');
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="circle-container">
+        <div class="water-content">
+            <div class="water"></div>
+        </div>
+    </div>
+    <div class="controls">
+        <label>Water Level</label>
+        <input type="range" min="0" max="75" value="50" class="slider" id="waterLevel">
+        <span id="levelValue">50%</span>
+    </div>
+
+    <script>
+        const slider = document.getElementById('waterLevel');
+        const water = document.querySelector('.water');
+        const levelValue = document.getElementById('levelValue');
+
+        slider.addEventListener('input', function() {
+            const value = this.value;
+            const offset = (100-39) - value;
+            water.style.transform = `translateY(${offset}%)`;
+            levelValue.textContent = `${value}%`;
+        });
+    </script>
+</body>
+</html>
