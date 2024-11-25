@@ -60,8 +60,8 @@ class WaterIndicator {
 
           .fish {
           position: absolute;
-          width: 20 px;
-          height: 20 px;
+          width: 15px;
+          height: 15px;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
