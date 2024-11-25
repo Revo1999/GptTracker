@@ -115,7 +115,7 @@
 
     <div class="controls">
         <label>Water Level</label>
-        <input type="range" min="0" max="100" value="50" class="slider" id="waterLevel">
+        <input type="range" min="0" max="100" value="1" class="slider" id="waterLevel">
         <span id="levelValue">50%</span>
     </div>
 
@@ -124,11 +124,10 @@
         const water = document.getElementById('water');
         const levelValue = document.getElementById('levelValue');
 
-        slider.addEventListener('input', function() {
-            const sliderValue = this.value;
-
+        // Function to update water height based on slider value
+        function updateWaterLevel(sliderValue) {
             // Map slider value (0-100) to the range 35 to 225
-            const mappedHeight = sliderValue*0.7;
+            const mappedHeight = sliderValue * 0.7;
 
             // Set the water height based on the mapped value
             water.style.height = `${mappedHeight}px`;
@@ -138,7 +137,15 @@
 
             // Display the corresponding slider value
             levelValue.textContent = `${sliderValue}%`;
+        }
+
+        // Add event listener to the slider to update the water level on input
+        slider.addEventListener('input', function() {
+            updateWaterLevel(this.value);
         });
+
+        // Initialize the water level immediately on page load
+        updateWaterLevel(slider.value);
     </script>
 </body>
 </html>
