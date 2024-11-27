@@ -213,7 +213,7 @@ saveButton.addEventListener('click', function () {
     // Update chrome storage
     chrome.storage.local.set({ 
         weeklyLimit: waterLimit,
-        locationSelected: selectedLocation,
+        selectedLocation: selectedLocation,
         theme: selectedTheme 
     }, function() {
         // Refresh the page after saving

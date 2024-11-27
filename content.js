@@ -172,9 +172,7 @@ class WaterIndicator {
       
       // Calculate total ML based on the specific location's ML per message
       let totalML = weeklyCount * locationML;
-      let output = totalML > 1000 
-    ? (totalML / 1000).toFixed(1) + " L" : totalML.toFixed(1) + " mL";
-      
+      let output = totalML > 1000 ? (totalML / 1000).toFixed(1) + " L" : totalML.toFixed(1) + " mL";
       text.textContent = `Water consumed: ${output} (${percentage.toFixed(0)}%)`;
   }
 }
@@ -242,9 +240,9 @@ function updateCount() {
 
   // Update the water indicator if it exists
   if (window.waterIndicator) {
-    chrome.storage.local.get(['weeklyLimit', 'selectedLocation',], (data) => {
+    chrome.storage.local.get(['weeklyLimit', 'selectedLocation'], (data) => {
       const weeklyLimit = data.weeklyLimit || 100; // Default to 100 if not set
-      const locationML = data.locationML || 50; // Default to 50mL if not set
+      const locationML = data.selectedLocation; // Default to 50mL if not set
       window.waterIndicator.update(weeklyMessageCount.count, weeklyLimit, locationML);
     });
   }
@@ -308,15 +306,16 @@ function initializeObserver() {
           console.log("Water indicator injected");
 
           // Fetch weekly limit and selected location to calculate water consumption
-          chrome.storage.local.get(['weeklyLimit', 'locationSelected'], (data) => {
-              const weeklyLimit = data.weeklyLimit || 100; // Default to 100 if not set
-              const locationML = data.locationSelected || 50; // Default to 50mL if not set
+          chrome.storage.local.get(['weeklyLimit', 'selectedLocation'], (data) => {
+              const weeklyLimit = data.weeklyLimit; // Default to 100 if not set
+              const locationML = data.selectedLocation; // Default to 50mL if not set
               
               // Use the existing weeklyMessageCount from localStorage
               const storedWeeklyData = localStorage.getItem('chatgptWeeklyMessageCount');
               const weeklyMessageCount = storedWeeklyData ? JSON.parse(storedWeeklyData).count : 0;
 
               // Update the water indicator with current weekly count, limit, and location ML
+              console.log(locationML)
               waterIndicator.update(weeklyMessageCount, weeklyLimit, locationML);
               window.waterIndicator = waterIndicator;
           });
