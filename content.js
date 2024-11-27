@@ -43,43 +43,73 @@ class WaterIndicator {
               transform: translateX(10px)
           }
 
-          .circle-svg {
+          .circle-container {
+              position: relative;
+              width: 30px;
+              height: 30px;
+              overflow: hidden;
+              border-radius: 50%;
+              border: 2px solid white;
+              box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+              background: white;
+          }
+
+          .water-content {
               position: absolute;
+              width: 100%;
+              height: 100%;
+              background: transparent;
+          }
+
+          .water {
+              position: absolute;
+              left: 0;
+              width: 100%;
+              background: #bed7f9;
+              transition: transform 0.3s ease, height 0.3s ease;
+              animation: animate 4s ease-in-out infinite;
+          }
+
+          @keyframes animate {
+              0%, 100% {
+                  clip-path: polygon(
+                      0% 45%,
+                      16% 47%,
+                      33% 50%,
+                      54% 55%,
+                      70% 56%,
+                      84% 54%,
+                      100% 52%,
+                      100% 100%,
+                      0% 100%
+                  );
+              }
+
+              50% {
+                  clip-path: polygon(
+                      0% 50%,
+                      15% 52%,
+                      34% 54%,
+                      51% 53%,
+                      67% 51%,
+                      84% 49%,
+                      100% 48%,
+                      100% 100%,
+                      0% 100%
+                  );
+              }
+          }
+              .fish {
+              position: absolute;
+              width: 15px;
+              height: 15px;
               top: 50%;
               left: 50%;
               transform: translate(-50%, -50%);
+              z-index: 2;
           }
-
-          .circle-svg-back {
-              z-index: 0;
-          }
-
-          .circle-svg-front {
-              z-index: 1;
-          }
-
-          .fish {
-          position: absolute;
-          width: 15px;
-          height: 15px;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          z-index: 2;
-      }
       `;
       document.head.appendChild(style);
-  }
-
-  createCircleSVGs() {
-      return {
-          back: `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 36 36" fill="none" class="circle-svg circle-svg-back">
-                   <circle cx="18" cy="18" r="18" fill="#F4F4F4"/>
-                 </svg>`,
-          front: `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 34 34" fill="none" class="circle-svg circle-svg-front">
-                    <circle cx="17" cy="16.9999" r="16.9091" fill="#89BCFF" fill-opacity="0.5"/>
-                  </svg>`
-      };
   }
 
   render() {
@@ -90,32 +120,62 @@ class WaterIndicator {
 
       const text = document.createElement('div');
       text.className = 'water-text';
-      text.textContent = `Water consumed: ${this.value} mL`;
+      text.textContent = `Water consumed: 0 mL`;
 
       const circleContainer = document.createElement('div');
       circleContainer.className = 'water-circle-container';
       
-      // Insert both SVG circles
-      const svgs = this.createCircleSVGs();
-      circleContainer.innerHTML = svgs.back + svgs.front;
+      // Create water circle animation
+      const waterContainer = document.createElement('div');
+      waterContainer.className = 'circle-container';
+      
+      const waterContent = document.createElement('div');
+      waterContent.className = 'water-content';
+      
+      const water = document.createElement('div');
+      water.className = 'water';
+      water.id = 'water';
 
-      // Add PNG image
-      const waterIcon = document.createElement('img');
-      waterIcon.className = 'fish';
-      waterIcon.src = chrome.runtime.getURL('fish.png');
-      waterIcon.alt = 'fish icon';
-      circleContainer.appendChild(waterIcon);
+      waterContent.appendChild(water);
+      waterContainer.appendChild(waterContent);
+      circleContainer.appendChild(waterContainer);
 
       pill.appendChild(text);
       pill.appendChild(circleContainer);
 
       this.container.appendChild(pill);
+      this.waterElement = water;
+
+      const waterIcon = document.createElement('img');
+      waterIcon.className = 'fish';
+      
+      waterIcon.src = chrome.runtime.getURL('fish.png');
+      waterIcon.alt = 'fish icon';
+      circleContainer.appendChild(waterIcon);
   }
 
-  update(newValue) {
-      this.value = newValue;
+  update(weeklyCount, weeklyLimit, locationML) {
+      // Calculate percentage of weekly limit used
+      const percentage = Math.min((weeklyCount / weeklyLimit) * 100, 100);
+      
+      // Map percentage to water height (0-30px)
+      const mappedHeight = percentage;
+
+      // Update water height
+      if (this.waterElement) {
+          this.waterElement.style.height = `${70}px`;
+          this.waterElement.style.transform = `translateY(${0.275 * mappedHeight - 40}px)`;
+      }
+
+      // Update text to show consumption
       const text = this.container.querySelector('.water-text');
-      text.textContent = `Water consumed: ${this.value} mL`;
+      
+      // Calculate total ML based on the specific location's ML per message
+      let totalML = weeklyCount * locationML;
+      let output = totalML > 1000 
+    ? (totalML / 1000).toFixed(1) + " L" : totalML.toFixed(1) + " mL";
+      
+      text.textContent = `Water consumed: ${output} (${percentage.toFixed(0)}%)`;
   }
 }
 
@@ -175,39 +235,19 @@ function updateCount() {
   localStorage.setItem('chatgptMessageCount', JSON.stringify(messageCount));
   console.log('Message counted! New count:', messageCount.count);
 
-  if (window.waterIndicator) {
-      window.waterIndicator.update(messageCount.count);
-  }
-
   checkAndResetWeeklyCount();
   weeklyMessageCount.count++;
   localStorage.setItem('chatgptWeeklyMessageCount', JSON.stringify(weeklyMessageCount));
   console.log('Weekly message counted! New weekly count:', weeklyMessageCount.count);
 
-  
-  let weeklylimitdata;
-  let locationselecteddata; 
-
-
-  chrome.storage.local.get('weeklyLimit', (data) => {
-    weeklylimitdata = data.weeklyLimit;
-  
-    chrome.storage.local.get('locationSelected', (data) => {
-      locationselecteddata = data.locationSelected;
-      
-
-      let totalML = (locationselecteddata * weeklyMessageCount.count).toFixed(2);
-      let output = totalML > 1000 ? (totalML / 1000).toFixed(2) + " L" : totalML + " mL";
-
-      console.log(locationselecteddata);
-      console.log(weeklyMessageCount.count);
-      document.querySelector('.water-text').textContent = 
-      `${"Water consumed: " + output}`
-     
+  // Update the water indicator if it exists
+  if (window.waterIndicator) {
+    chrome.storage.local.get(['weeklyLimit', 'selectedLocation',], (data) => {
+      const weeklyLimit = data.weeklyLimit || 100; // Default to 100 if not set
+      const locationML = data.locationML || 50; // Default to 50mL if not set
+      window.waterIndicator.update(weeklyMessageCount.count, weeklyLimit, locationML);
     });
-  });
-
-
+  }
 }
 
 window.addEventListener('keydown', function(event) {
@@ -255,44 +295,31 @@ window.testCounter = function() {
   alert('Counter is active! Current count: ' + messageCount.count + ', Weekly count: ' + weeklyMessageCount.count);
 };
 
-console.log('=== ChatGPT Counter Ready !!!');
-
 function initializeObserver() {
-
   const observer = new MutationObserver(() => {
       const shareButton = document.querySelector('[data-testid="profile-button"]');
       
-      //create html div element for water indicator
       if (shareButton && !document.querySelector('.water-pill')) {
           const waterDiv = document.createElement('div');
           
           const waterIndicator = new WaterIndicator(waterDiv, "1");
           
-          
           shareButton.parentNode.insertBefore(waterDiv, shareButton);
           console.log("Water indicator injected");
 
-          let weeklylimitdata;
-          let locationselecteddata; 
-        
-        
-          chrome.storage.local.get('weeklyLimit', (data) => {
-            weeklylimitdata = data.weeklyLimit;
-          
-            chrome.storage.local.get('locationSelected', (data) => {
-              locationselecteddata = data.locationSelected;
+          // Fetch weekly limit and selected location to calculate water consumption
+          chrome.storage.local.get(['weeklyLimit', 'locationSelected'], (data) => {
+              const weeklyLimit = data.weeklyLimit || 100; // Default to 100 if not set
+              const locationML = data.locationSelected || 50; // Default to 50mL if not set
+              
+              // Use the existing weeklyMessageCount from localStorage
+              const storedWeeklyData = localStorage.getItem('chatgptWeeklyMessageCount');
+              const weeklyMessageCount = storedWeeklyData ? JSON.parse(storedWeeklyData).count : 0;
 
-              let totalML = (locationselecteddata * weeklyMessageCount.count).toFixed(2);
-              let output = totalML > 1000 ? (totalML / 1000).toFixed(2) + " L" : totalML + " mL";
-          
-              document.querySelector('.water-text').textContent = 
-              `${"Water consumed: " + (output)}`
-             
-            });
+              // Update the water indicator with current weekly count, limit, and location ML
+              waterIndicator.update(weeklyMessageCount, weeklyLimit, locationML);
+              window.waterIndicator = waterIndicator;
           });
-
-
-          window.waterIndicator = waterIndicator;
       }
   });
 
@@ -308,3 +335,5 @@ if (document.readyState === 'loading') {
 } else {
   initializeObserver();
 }
+
+console.log('=== ChatGPT Counter Ready !!!');

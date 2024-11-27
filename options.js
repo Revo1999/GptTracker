@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const countElement = document.getElementById('count');
     const weeklyCountElement = document.getElementById('weekly_count');
     const watercountElement = document.getElementById('water_count');
@@ -7,27 +7,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const resetButton = document.getElementById('resetButton');
     const resetWeeklyButton = document.getElementById('resetWeeklyButton');
     const selectElement = document.getElementById('locationSelect');
-    const waterLimitInput = document.getElementById('waterLimitInput');
+    const waterLimitSlider = document.getElementById('waterLimitSlider');
+    const waterLimitValueDisplay = document.getElementById('waterLimitValue');
+    const themeSelect = document.getElementById('themeSelect');
+    const saveButton = document.getElementById('saveButton');
 
     function updateDisplay() {
         chrome.tabs.query({}, (tabs) => {
             const chatGPTTabs = tabs.filter(tab => tab.url && tab.url.includes('chatgpt.com'));
-            
+
             if (chatGPTTabs.length > 0) {
                 const tab = chatGPTTabs[0];
-                
+
                 // Fetch total count
                 chrome.tabs.sendMessage(tab.id, 'getChatGPTMessageCount', (response) => {
                     if (chrome.runtime.lastError) {
                         console.error(chrome.runtime.lastError);
                         return;
                     }
-                    
+
                     if (response) {
                         try {
                             const parsed = JSON.parse(response);
                             countElement.textContent = parsed.count || 0;
-                            
+
                             const selectedValue = parseFloat(selectElement.value);
                             const totalVolume = parsed.count * selectedValue;
                             const formattedVolume = totalVolume < 1000
@@ -55,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         try {
                             const parsedWeekly = JSON.parse(response);
                             weeklyCountElement.textContent = parsedWeekly.count || 0;
-                            
+
                             const selectedValue = parseFloat(selectElement.value);
                             const weeklyVolume = parsedWeekly.count * selectedValue;
                             const formattedWeeklyVolume = weeklyVolume < 1000
@@ -80,15 +83,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Reset total count with confirmation
-    resetButton.addEventListener('click', function() {
+    resetButton.addEventListener('click', function () {
         if (confirm("Are you sure you want to reset the total count?")) {
             chrome.tabs.query({}, (tabs) => {
                 const chatGPTTabs = tabs.filter(tab => tab.url && tab.url.includes('chatgpt.com'));
-                
+
                 if (chatGPTTabs.length > 0) {
                     const tab = chatGPTTabs[0];
-                    
+
                     chrome.tabs.sendMessage(tab.id, 'resetChatGPTMessageCount', (response) => {
                         if (chrome.runtime.lastError) {
                             console.error(chrome.runtime.lastError);
@@ -101,15 +103,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Reset weekly count with confirmation
-    resetWeeklyButton.addEventListener('click', function() {
+    resetWeeklyButton.addEventListener('click', function () {
         if (confirm("Are you sure you want to reset the weekly count?")) {
             chrome.tabs.query({}, (tabs) => {
                 const chatGPTTabs = tabs.filter(tab => tab.url && tab.url.includes('chatgpt.com'));
-                
+
                 if (chatGPTTabs.length > 0) {
                     const tab = chatGPTTabs[0];
-                    
+
                     chrome.tabs.sendMessage(tab.id, 'resetChatGPTWeeklyMessageCount', (response) => {
                         if (chrome.runtime.lastError) {
                             console.error(chrome.runtime.lastError);
@@ -136,28 +137,81 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function saveWaterLimit() {
-        const waterLimit = waterLimitInput.value;
+        const waterLimit = waterLimitSlider.value;
         localStorage.setItem('waterLimit', waterLimit);
+        waterLimitValueDisplay.textContent = `${waterLimit} ml`;
     }
 
     function loadWaterLimit() {
         const savedWaterLimit = localStorage.getItem('waterLimit');
         if (savedWaterLimit) {
-            waterLimitInput.value = savedWaterLimit;
+            waterLimitSlider.value = savedWaterLimit;
+            waterLimitValueDisplay.textContent = `${savedWaterLimit} ml`;
         }
     }
 
-    window.onload = function() {
+    function saveTheme() {
+        const selectedTheme = themeSelect.value;
+        localStorage.setItem('theme', selectedTheme);
+    }
+
+    function loadTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            themeSelect.value = savedTheme;
+
+            // You can extend this part to handle immediate theme application
+            if (savedTheme === 'light') {
+                document.body.style.backgroundColor = '#ffffff';
+                document.body.style.color = '#000000';
+            } else if (savedTheme === 'intrusive') {
+                document.body.style.backgroundColor = '#1e1e1e';
+                document.body.style.color = '#e3e3e3';
+            } else {
+                document.body.style.backgroundColor = '#1e1e1e';
+                document.body.style.color = '#e3e3e3';
+            }
+        }
+    }
+
+    window.onload = function () {
         loadLocation();
         loadWaterLimit();
-        saveLocation()
+        loadTheme();
+        saveLocation();
 
-        chrome.storage.local.set({weeklyLimit: localStorage.getItem('waterLimit')})
-        chrome.storage.local.set({locationSelected: localStorage.getItem('selectedLocation')})
+        chrome.storage.local.set({ weeklyLimit: localStorage.getItem('waterLimit') });
+        chrome.storage.local.set({ locationSelected: localStorage.getItem('selectedLocation') });
+        chrome.storage.local.set({ theme: localStorage.getItem('theme') });
     };
 
     document.getElementById('locationSelect').addEventListener('change', saveLocation);
-    waterLimitInput.addEventListener('change', saveWaterLimit);
+    document.getElementById('themeSelect').addEventListener('change', saveTheme);
+    waterLimitSlider.addEventListener('input', saveWaterLimit);
 
     updateDisplay();
+});
+
+saveButton.addEventListener('click', function () {
+    // Save location
+    const selectedLocation = document.getElementById('locationSelect').value;
+    localStorage.setItem('selectedLocation', selectedLocation);
+
+    // Save water limit
+    const waterLimit = waterLimitSlider.value;
+    localStorage.setItem('waterLimit', waterLimit);
+
+    // Save theme
+    const selectedTheme = themeSelect.value;
+    localStorage.setItem('theme', selectedTheme);
+
+    // Update chrome storage
+    chrome.storage.local.set({ 
+        weeklyLimit: waterLimit,
+        locationSelected: selectedLocation,
+        theme: selectedTheme 
+    }, function() {
+        // Refresh the page after saving
+        location.reload();
+    });
 });
