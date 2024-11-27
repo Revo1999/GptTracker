@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectElement = document.getElementById('locationSelect');
     const waterLimitSlider = document.getElementById('waterLimitSlider');
     const waterLimitValueDisplay = document.getElementById('waterLimitValue');
+    const promptValueDisplay = document.getElementById('promptsAmount')
     const themeSelect = document.getElementById('themeSelect');
     const saveButton = document.getElementById('saveButton');
 
@@ -140,13 +141,17 @@ document.addEventListener('DOMContentLoaded', function () {
         const waterLimit = waterLimitSlider.value;
         localStorage.setItem('waterLimit', waterLimit);
         waterLimitValueDisplay.textContent = `${waterLimit} ml`;
+        loadWaterLimit();
     }
 
     function loadWaterLimit() {
         const savedWaterLimit = localStorage.getItem('waterLimit');
+        const location = localStorage.getItem('selectedLocation');
         if (savedWaterLimit) {
             waterLimitSlider.value = savedWaterLimit;
-            waterLimitValueDisplay.textContent = `${savedWaterLimit} ml`;
+            waterLimitValueDisplay.textContent = `${((savedWaterLimit*location*479005)/1000).toFixed(0)} liters`;
+            promptValueDisplay.textContent = `Weekly prompts: ${savedWaterLimit} `;
+        
         }
     }
 
