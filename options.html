@@ -116,6 +116,7 @@
             text-decoration: underline;
         }
 
+        /* Water limit slider */
         #waterLimitSlider {
             -webkit-appearance: none;
             width: 100%;
@@ -168,6 +169,58 @@
             color: #e3e3e3;
             font-size: 15px;
             margin-top: 10px;
+        }
+
+        /* Water tracker themes */
+        .water-tracker.light {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .water-tracker.dark {
+            background-color: #222;
+            color: white;
+        }
+
+        .water-tracker.intrusive {
+            background-color: #ff4c00;
+            color: #e3e3e3;
+        }
+
+        .water-tracker {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 50px;
+            padding: 10px 20px;
+            width: 300px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .water-text {
+            font-size: 14px;
+        }
+
+        .icon-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            background-color: #e1e7ff;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        .water-tracker-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     </style>
 </head>
@@ -229,6 +282,16 @@
             <option value="dark">Dark</option>
         </select>
         <p>Preview</p>
+
+        <div class="water-tracker-wrapper">
+            <div id="themePreview" class="water-tracker intrusive">
+                <span class="water-text">Water consumed: 162.7 mL (34%)</span>
+                <div class="icon-container">
+                    <img src="fish.png" alt="Fish Icon" class="icon" />
+                </div>
+            </div>
+        </div>
+
         <br>
         <h2>Limit</h2>
         <p>Set your maximum water usage limit below:</p>

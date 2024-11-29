@@ -12,6 +12,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const promptValueDisplay = document.getElementById('promptsAmount')
     const themeSelect = document.getElementById('themeSelect');
     const saveButton = document.getElementById('saveButton');
+    const themePreview = document.getElementById('themePreview');
+
+    // Theme preview functionality
+    themeSelect.addEventListener('change', function() {
+        const selectedTheme = this.value;
+        
+        // Remove all theme classes
+        themePreview.classList.remove('light', 'dark', 'intrusive');
+        
+        // Add the selected theme class
+        themePreview.classList.add(selectedTheme);
+    });
 
     function updateDisplay() {
         chrome.tabs.query({}, (tabs) => {
