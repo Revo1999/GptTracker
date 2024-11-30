@@ -163,31 +163,41 @@ document.addEventListener('DOMContentLoaded', function () {
             waterLimitSlider.value = savedWaterLimit;
             waterLimitValueDisplay.textContent = `${((savedWaterLimit*location*479005)/1000).toFixed(0)} liters`;
             promptValueDisplay.textContent = `Weekly prompts: ${savedWaterLimit} `;
-        
         }
     }
 
     function saveTheme() {
         const selectedTheme = themeSelect.value;
         localStorage.setItem('theme', selectedTheme);
+
+        // Send theme to content script
+        chrome.tabs.query({}, (tabs) => {
+            const chatGPTTabs = tabs.filter(tab => tab.url && tab.url.includes('chatgpt.com'));
+
+            if (chatGPTTabs.length > 0) {
+                const tab = chatGPTTabs[0];
+                chrome.tabs.sendMessage(tab.id, { 
+                    action: 'changeTheme', 
+                    theme: selectedTheme 
+                });
+            }
+        });
     }
 
+    
     function loadTheme() {
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme) {
             themeSelect.value = savedTheme;
 
-            // You can extend this part to handle immediate theme application
-            if (savedTheme === 'light') {
-                document.body.style.backgroundColor = '#ffffff';
-                document.body.style.color = '#000000';
-            } else if (savedTheme === 'intrusive') {
-                document.body.style.backgroundColor = '#1e1e1e';
-                document.body.style.color = '#e3e3e3';
-            } else {
-                document.body.style.backgroundColor = '#1e1e1e';
-                document.body.style.color = '#e3e3e3';
-            }
+
+            const selectedTheme = savedTheme;
+        
+            // Remove all theme classes
+            themePreview.classList.remove('light', 'dark', 'intrusive');
+            
+            // Add the selected theme class
+            themePreview.classList.add(selectedTheme);
         }
     }
 
@@ -221,6 +231,19 @@ saveButton.addEventListener('click', function () {
     // Save theme
     const selectedTheme = themeSelect.value;
     localStorage.setItem('theme', selectedTheme);
+
+    // Send theme to content script
+    chrome.tabs.query({}, (tabs) => {
+        const chatGPTTabs = tabs.filter(tab => tab.url && tab.url.includes('chatgpt.com'));
+
+        if (chatGPTTabs.length > 0) {
+            const tab = chatGPTTabs[0];
+            chrome.tabs.sendMessage(tab.id, { 
+                action: 'changeTheme', 
+                theme: selectedTheme 
+            });
+        }
+    });
 
     // Update chrome storage
     chrome.storage.local.set({ 

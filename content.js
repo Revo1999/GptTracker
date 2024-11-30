@@ -1,5 +1,12 @@
 console.log('=== ChatGPT Counter Extension Starting ===');
 
+themevalue = "intrusive"
+
+console.log(localStorage.getItem('themeo'))
+if (localStorage.getItem('themeo') == null) {
+  localStorage.setItem('themeo', themevalue)
+}
+
 // JS class for the water indicator html element to inject
 class WaterIndicator {
   constructor(container, value) {
@@ -15,7 +22,6 @@ class WaterIndicator {
               display: flex;
               align-items: center;
               justify-content: space-between;
-              background-color: #212121;
               border: 1px solid #424242;
               padding: 8px 12px;
               border-radius: 100px;
@@ -23,6 +29,19 @@ class WaterIndicator {
               width: 300px;
               height: 40px;
               box-sizing: border-box;
+              transition: background-color 0.3s ease;
+          }
+
+          .water-pill.light {
+              background-color: #f0f0f0;
+          }
+
+          .water-pill.dark {
+              background-color: #212121;
+          }
+
+          .water-pill.intrusive {
+              background-color: #ff4c00;
           }
 
           .water-text {
@@ -30,6 +49,10 @@ class WaterIndicator {
               font-family: system-ui, -apple-system, sans-serif;
               font-size: 14px;
               font-weight: 600;
+          }
+
+          .water-pill.light .water-text {
+              color: black;
           }
 
           .water-circle-container {
@@ -99,7 +122,7 @@ class WaterIndicator {
                   );
               }
           }
-              .fish {
+          .fish {
               position: absolute;
               width: 15px;
               height: 15px;
@@ -116,7 +139,7 @@ class WaterIndicator {
       this.createStyles();
 
       const pill = document.createElement('div');
-      pill.className = 'water-pill';
+      pill.className = 'water-pill dark'; // Default to dark theme
 
       const text = document.createElement('div');
       text.className = 'water-text';
@@ -145,6 +168,7 @@ class WaterIndicator {
 
       this.container.appendChild(pill);
       this.waterElement = water;
+      this.pillElement = pill;
 
       const waterIcon = document.createElement('img');
       waterIcon.className = 'fish';
@@ -174,6 +198,16 @@ class WaterIndicator {
       let totalML = weeklyCount * locationML;
       let output = totalML > 1000 ? (totalML / 1000).toFixed(1) + " L" : totalML.toFixed(1) + " mL";
       text.textContent = `Water consumed: ${output} (${percentage.toFixed(0)}%)`;
+  }
+
+  changeTheme(theme) {
+    if (this.pillElement) {
+        // Remove existing theme classes
+        this.pillElement.classList.remove('light', 'dark', 'intrusive');
+        // Add the new theme class
+        this.pillElement.classList.add(theme);
+        console.log(`WaterIndicator theme changed to ${theme}`);
+    }
   }
 }
 
@@ -240,9 +274,10 @@ function updateCount() {
 
   // Update the water indicator if it exists
   if (window.waterIndicator) {
-    chrome.storage.local.get(['weeklyLimit', 'selectedLocation'], (data) => {
+    chrome.storage.local.get(['weeklyLimit', 'selectedLocation', 'themeo'], (data) => {
       const weeklyLimit = data.weeklyLimit || 100; // Default to 100 if not set
       const locationML = data.selectedLocation; // Default to 50mL if not set
+
       window.waterIndicator.update(weeklyMessageCount.count, weeklyLimit, locationML);
     });
   }
@@ -286,6 +321,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       localStorage.setItem('chatgptWeeklyMessageCount', JSON.stringify(newWeeklyMessageCount));
       weeklyMessageCount = newWeeklyMessageCount;
       sendResponse('Weekly message count reset');
+  } else if (message.action === 'changeTheme') {
+      if (window.waterIndicator) {
+          localStorage.setItem('themeo', message.theme);
+          window.waterIndicator.changeTheme(message.theme);
+      }
   }
 });
 
@@ -309,14 +349,18 @@ function initializeObserver() {
           chrome.storage.local.get(['weeklyLimit', 'selectedLocation'], (data) => {
               const weeklyLimit = data.weeklyLimit; // Default to 100 if not set
               const locationML = data.selectedLocation; // Default to 50mL if not set
+              const theme = localStorage.getItem('themeo')
               
               // Use the existing weeklyMessageCount from localStorage
               const storedWeeklyData = localStorage.getItem('chatgptWeeklyMessageCount');
               const weeklyMessageCount = storedWeeklyData ? JSON.parse(storedWeeklyData).count : 0;
 
+            console.log('=== ChatGPT Counter Ready !!!');
+
               // Update the water indicator with current weekly count, limit, and location ML
               console.log(locationML)
               waterIndicator.update(weeklyMessageCount, weeklyLimit, locationML);
+              waterIndicator.changeTheme(theme);
               window.waterIndicator = waterIndicator;
           });
       }
@@ -335,4 +379,3 @@ if (document.readyState === 'loading') {
   initializeObserver();
 }
 
-console.log('=== ChatGPT Counter Ready !!!');
