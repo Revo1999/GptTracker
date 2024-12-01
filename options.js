@@ -28,28 +28,28 @@ document.addEventListener('DOMContentLoaded', function () {
     function updateDisplay() {
         chrome.tabs.query({}, (tabs) => {
             const chatGPTTabs = tabs.filter(tab => tab.url && tab.url.includes('chatgpt.com'));
-
+    
             if (chatGPTTabs.length > 0) {
                 const tab = chatGPTTabs[0];
-
+    
                 // Fetch total count
                 chrome.tabs.sendMessage(tab.id, 'getChatGPTMessageCount', (response) => {
                     if (chrome.runtime.lastError) {
                         console.error(chrome.runtime.lastError);
                         return;
                     }
-
+    
                     if (response) {
                         try {
                             const parsed = JSON.parse(response);
                             countElement.textContent = parsed.count || 0;
-
+    
                             const selectedValue = parseFloat(selectElement.value);
                             const totalVolume = parsed.count * selectedValue;
                             const formattedVolume = totalVolume < 1000
                                 ? totalVolume.toFixed(2) + " ml"
                                 : (totalVolume / 1000).toFixed(2) + " L";
-
+    
                             watercountElement.textContent = formattedVolume;
                             lastUpdatedElement.textContent = new Date(parsed.lastUpdated).toLocaleString() || 'Never';
                         } catch (error) {
@@ -59,30 +59,69 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     }
                 });
-
+    
                 // Fetch weekly count
                 chrome.tabs.sendMessage(tab.id, 'getChatGPTWeeklyMessageCount', (response) => {
                     if (chrome.runtime.lastError) {
                         console.error(chrome.runtime.lastError);
                         return;
                     }
-
+    
                     if (response) {
                         try {
                             const parsedWeekly = JSON.parse(response);
                             weeklyCountElement.textContent = parsedWeekly.count || 0;
-
+    
                             const selectedValue = parseFloat(selectElement.value);
                             const weeklyVolume = parsedWeekly.count * selectedValue;
                             const formattedWeeklyVolume = weeklyVolume < 1000
                                 ? weeklyVolume.toFixed(2) + " ml"
                                 : (weeklyVolume / 1000).toFixed(2) + " L";
-
+    
                             weeklyWaterCountElement.textContent = formattedWeeklyVolume;
                         } catch (error) {
                             console.error('Error parsing weekly data:', error);
                             weeklyCountElement.textContent = '0';
                             weeklyWaterCountElement.textContent = '0 ml';
+                        }
+                    }
+                });
+    
+                // Fetch stats data
+                chrome.tabs.sendMessage(tab.id, 'getChatGPTStats', (response) => {
+                    if (chrome.runtime.lastError) {
+                        console.error(chrome.runtime.lastError);
+                        return;
+                    }
+    
+                    if (response) {
+                        try {
+                            const stats = JSON.parse(response);
+                            // Store the stats data
+                            localStorage.setItem({ 
+                                chatGPTStats: {
+                                    startDate: stats.startDate,
+                                    weekdayCounts: stats.weekdayCounts,
+                                    usageStats: stats.usageStats
+                                }
+                            });
+    
+                            // Update any stats display elements if they exist
+                            if (document.getElementById('startDate')) {
+                                document.getElementById('startDate').textContent = 
+                                    new Date(stats.startDate).toLocaleDateString();
+                            }
+                            if (document.getElementById('totalDays')) {
+                                document.getElementById('totalDays').textContent = 
+                                    stats.usageStats.totalDays;
+                            }
+                            if (document.getElementById('avgPerDay')) {
+                                document.getElementById('avgPerDay').textContent = 
+                                    stats.usageStats.avgMessagesPerDay;
+                            }
+    
+                        } catch (error) {
+                            console.error('Error parsing stats data:', error);
                         }
                     }
                 });

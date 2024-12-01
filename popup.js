@@ -228,6 +228,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     try {
                         const parsed = JSON.parse(response);
                         lastUpdatedElement.textContent = new Date(parsed.lastUpdated).toLocaleString() || 'Never';
+                        
+                        // Cache the new data
                         chrome.storage.local.set({ 'cachedMessageData': response });
                     } catch (error) {
                         console.error('Error parsing retrieved data:', error);
@@ -235,33 +237,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
-            // Retrieve weekly message count
+            // Retrieve weekly message count and update water pill
             chrome.tabs.sendMessage(tabs[0].id, 'getChatGPTWeeklyMessageCount', (weeklyResponse) => {
                 if (weeklyResponse) {
                     try {
                         const weeklyParsed = JSON.parse(weeklyResponse);
+                        
+                        // Cache the new weekly data
                         chrome.storage.local.set({ 'cachedWeeklyData': weeklyResponse });
+                        
+                        // Update display with new data
                         updateWaterPill(weeklyParsed.count);
                     } catch (error) {
                         console.error('Error parsing weekly data:', error);
                     }
                 }
             });
-
-            // Retrieve stats data
-            chrome.tabs.sendMessage(tabs[0].id, 'getChatGPTStats', (statsResponse) => {
-                if (statsResponse) {
-                    try {
-                        const statsParsed = JSON.parse(statsResponse);
-                        chrome.storage.local.set({ 'cachedStatsData': statsResponse });
-                        updateStats(statsParsed);
-                        console.log("stats fetched")
-                    } catch (error) {
-                        console.error('Error parsing stats data:', error);
-                    }
-                }
-            });
         });
+        
     }
 
     updateDisplay();
