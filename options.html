@@ -10,60 +10,74 @@
 <body>
     <h1 id="main-header1">
         <span class="track-part">TrackGPT</span>
-        <span class="settings-part">SETTINGS</span>
+        <span class="settings-part">Settings</span>
     </h1>
-        <div class="container">
-            <div class="item stats">
-                <h2>Current Statistics</h2>
-                
-                <h3>Total</h3>
-                <p>Water Used: <span id="water_count">0 ml</span></p>
-                <p>Messages: <span id="count">0</span></p>
-                <h5>Last Updated: <span id="lastUpdated">Never</span></h5>
+    <div class="container">
 
-                <button id="resetButton" class="reset-button">Reset Total Count</button>
-                <button id="resetWeeklyButton" class="reset-button">Reset Weekly Count</button>
-            </div>
-
-
-            <h3>Weekly</h3>
+        <div class="item item-1">
+            <h1>Item 1: Weekly overview</h1>
             <p>Water Used: <span id="weekly_water_count">0 ml</span></p>
             <p>Messages: <span id="weekly_count">0</span></p>
+            <div><button id="resetWeeklyButton" class="reset-button">Reset Weekly Count</button></div>
+        </div>
+        
+        <div class="item item-2">
+            <h1>Item 2: Usage</h1>
+            <h2>Total</h2>
+            <p>Water Used: <span id="water_count">0 ml</span></p>
+            <p>Messages: <span id="count">0</span></p>
+            <h5>Last Updated: <span id="lastUpdated">Never</span></h5>
+            <button id="resetButton" class="reset-button">Reset Total Count</button>
+        </div>
 
-            <h2>Choose Location:</h2>
+        <div class="item item-3">
+            <div class="box">
+                <div>
+                    <h1>Geography</h1>
+                    <select id="locationSelect" class="location-select">
+                        <option value="" disabled>Select a location</option>
+                        <option value="16.904">U.S Average</option>
+                        <option value="12.503">Wyoming</option>
+                        <option value="15.163">Iowa</option>
+                        <option value="33.219">Arizona</option>
+                        <option value="48.294">Washington</option>
+                        <option value="11.593">Virginia</option>
+                        <option value="14.009">Texas</option>
+                        <option value="14.753">Singapore</option>
+                        <option value="7.189">Ireland</option>
+                        <option value="16.276">Netherlands</option>
+                        <option value="28.856">Sweden</option>
+                        <option value="23.966">Mexico</option>
+                        <option value="10.585">Georgia</option>
+                        <option value="14.448">Taiwan</option>
+                        <option value="19.126">Australia</option>
+                        <option value="19.704">India</option>
+                        <option value="19.592">Indonesia</option>
+                        <option value="14.794" selected>Denmark</option>
+                        <option value="20.390">Finland</option>
+                    </select>
+                </div>
+                <div>
+                    <h1>Limit</h1>
+                    <p>Set your maximum water usage limit below:</p>
+                    <input type="range" id="waterLimitSlider" min="0" max="50" step="1">
+                    <p id="promptsAmount">10 Prompts</p>
+                    <p id="waterLimitValue">1000 ml</p>
+                </div>
+            </div>  
             <p>
-                Please select your location from the dropdown menu below to get the most accurate water usage estimate!
+                Please select your location from the dropdown menu above to get the most accurate water usage estimate!
                 Estimates are based on GPT-3 model data from
                 <a href="https://arxiv.org/abs/2304.03271" target="_blank" rel="noopener noreferrer">
                     Making AI Less "Thirsty": Uncovering and Addressing the Secret Water Footprint of AI Models* (Li,
                     Yang, Islam, Ren)
                 </a>.
             </p>
+            <button id="saveButton" class="save-button">Save and Refresh</button>
+        </div>
 
-            <select id="locationSelect" class="location-select">
-                <option value="" disabled>Select a location</option>
-                <option value="16.904">U.S Average</option>
-                <option value="12.503">Wyoming</option>
-                <option value="15.163">Iowa</option>
-                <option value="33.219">Arizona</option>
-                <option value="48.294">Washington</option>
-                <option value="11.593">Virginia</option>
-                <option value="14.009">Texas</option>
-                <option value="14.753">Singapore</option>
-                <option value="7.189">Ireland</option>
-                <option value="16.276">Netherlands</option>
-                <option value="28.856">Sweden</option>
-                <option value="23.966">Mexico</option>
-                <option value="10.585">Georgia</option>
-                <option value="14.448">Taiwan</option>
-                <option value="19.126">Australia</option>
-                <option value="19.704">India</option>
-                <option value="19.592">Indonesia</option>
-                <option value="14.794" selected>Denmark</option>
-                <option value="20.390">Finland</option>
-            </select>
-
-            <h2>Themes</h2>
+        <div class="item item-4">
+            <h2>Item 4: Themes</h2>
             <p>Choose the theme for the application</p>
             <select id="themeSelect" class="theme-select">
                 <option value="intrusive" selected>Intrusive</option>
@@ -71,7 +85,6 @@
                 <option value="dark">Dark</option>
             </select>
             <p>Preview</p>
-
             <div class="water-tracker-wrapper">
                 <div id="themePreview" class="water-tracker intrusive">
                     <span class="water-text">Water consumed: 162.7 mL (34%)</span>
@@ -80,20 +93,16 @@
                     </div>
                 </div>
             </div>
-
-            <br>
-            <h2>Limit</h2>
-            <p>Set your maximum water usage limit below:</p>
-            <input type="range" id="waterLimitSlider" min="0" max="50" step="1">
-            <p id="promptsAmount">10 Prompts</p>
-            <p id="waterLimitValue">1000 ml</p>
-
-            <button id="saveButton" class="save-button">Save and Refresh</button>
-
-            <p class="credits">Made by: Peter & Victor</p>
         </div>
 
-        <script src="options.js"></script>
+        <div class="item item-5">
+            <h2>Item 5: Contact</h2>
+            <p>For any questions or feedback, please contact us at:</p>
+            <a href="mailto:" class="email"></a>
+        </div>
+        <p class="credits">Made by: Peter & Victor</p>
+    </div>
+    <script src="options.js"></script>
 </body>
 
 </html>
