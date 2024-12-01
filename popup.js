@@ -63,61 +63,61 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     
        @keyframes animate {
-    0%, 100% {
-        clip-path: polygon(
-            0% 45%,
-            5% 45.5%,
-            10% 46%,
-            15% 46.5%,
-            20% 47%,
-            25% 48%,
-            30% 49%,
-            35% 50%,
-            40% 51%,
-            45% 52%,
-            50% 53.5%,
-            55% 54.5%,
-            60% 55%,
-            65% 55.5%,
-            70% 56%,
-            75% 55.5%,
-            80% 55%,
-            85% 54.5%,
-            90% 53.5%,
-            95% 52.5%,
-            100% 52%,
-            100% 100%,
-            0% 100%
-        );
-    }
-    50% {
-        clip-path: polygon(
-            0% 50%,
-            5% 50.5%,
-            10% 51%,
-            15% 51.5%,
-            20% 52%,
-            25% 52.5%,
-            30% 53%,
-            35% 53.5%,
-            40% 53.5%,
-            45% 53.5%,
-            50% 53%,
-            55% 52.5%,
-            60% 52%,
-            65% 51.5%,
-            70% 51%,
-            75% 50.5%,
-            80% 50%,
-            85% 49.5%,
-            90% 48.5%,
-            95% 48%,
-            100% 48%,
-            100% 100%,
-            0% 100%
-        );
-    }
-}
+            0%, 100% {
+                clip-path: polygon(
+                    0% 45%,
+                    5% 45.5%,
+                    10% 46%,
+                    15% 46.5%,
+                    20% 47%,
+                    25% 48%,
+                    30% 49%,
+                    35% 50%,
+                    40% 51%,
+                    45% 52%,
+                    50% 53.5%,
+                    55% 54.5%,
+                    60% 55%,
+                    65% 55.5%,
+                    70% 56%,
+                    75% 55.5%,
+                    80% 55%,
+                    85% 54.5%,
+                    90% 53.5%,
+                    95% 52.5%,
+                    100% 52%,
+                    100% 100%,
+                    0% 100%
+                );
+            }
+            50% {
+                clip-path: polygon(
+                    0% 50%,
+                    5% 50.5%,
+                    10% 51%,
+                    15% 51.5%,
+                    20% 52%,
+                    25% 52.5%,
+                    30% 53%,
+                    35% 53.5%,
+                    40% 53.5%,
+                    45% 53.5%,
+                    50% 53%,
+                    55% 52.5%,
+                    60% 52%,
+                    65% 51.5%,
+                    70% 51%,
+                    75% 50.5%,
+                    80% 50%,
+                    85% 49.5%,
+                    90% 48.5%,
+                    95% 48%,
+                    100% 48%,
+                    100% 100%,
+                    0% 100%
+                );
+            }
+        }
         
         .fish {
             position: absolute;
@@ -170,10 +170,57 @@ document.addEventListener('DOMContentLoaded', function() {
         circleContainer.appendChild(waterIcon);
         pill.appendChild(circleContainer);
 
-        return { pill, water};
+        return { pill, water };
+    }
+
+    // Load cached data function
+    function loadCachedData() {
+        chrome.storage.local.get(['cachedMessageData', 'cachedWeeklyData'], (data) => {
+            if (data.cachedMessageData) {
+                try {
+                    const parsed = JSON.parse(data.cachedMessageData);
+                    lastUpdatedElement.textContent = new Date(parsed.lastUpdated).toLocaleString() || 'Never';
+                } catch (error) {
+                    console.error('Error parsing cached message data:', error);
+                }
+            }
+
+            if (data.cachedWeeklyData) {
+                try {
+                    const weeklyParsed = JSON.parse(data.cachedWeeklyData);
+                    updateWaterPill(weeklyParsed.count);
+                } catch (error) {
+                    console.error('Error parsing cached weekly data:', error);
+                }
+            }
+        });
+    }
+
+    // Update water pill with count
+    function updateWaterPill(count) {
+        countElement.textContent = count || 0;
+        
+        chrome.storage.local.get(['weeklyLimit', 'selectedLocation'], (data) => {
+            const weeklyLimit = data.weeklyLimit || 100;
+            const locationML = data.selectedLocation || 50;
+
+            const { pill } = createWaterPill(count, weeklyLimit, locationML);
+
+            chrome.storage.local.get('themeo', (themeData) => {
+                const theme = themeData.themeo || 'dark';
+                pill.classList.remove('light', 'dark', 'intrusive');
+                pill.classList.add(theme);
+
+                waterPillContainer.innerHTML = '';
+                waterPillContainer.appendChild(pill);
+            });
+        });
     }
     
     function updateDisplay() {
+        // Load cached data first
+        loadCachedData();
+
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             // Retrieve message count
             chrome.tabs.sendMessage(tabs[0].id, 'getChatGPTMessageCount', (response) => {
@@ -181,42 +228,36 @@ document.addEventListener('DOMContentLoaded', function() {
                     try {
                         const parsed = JSON.parse(response);
                         lastUpdatedElement.textContent = new Date(parsed.lastUpdated).toLocaleString() || 'Never';
+                        chrome.storage.local.set({ 'cachedMessageData': response });
                     } catch (error) {
                         console.error('Error parsing retrieved data:', error);
-                        countElement.textContent = '0';
-                        lastUpdatedElement.textContent = 'Error retrieving time';
                     }
                 }
             });
 
-            // Retrieve weekly message count and update water pill
+            // Retrieve weekly message count
             chrome.tabs.sendMessage(tabs[0].id, 'getChatGPTWeeklyMessageCount', (weeklyResponse) => {
                 if (weeklyResponse) {
                     try {
                         const weeklyParsed = JSON.parse(weeklyResponse);
-                        countElement.textContent = weeklyParsed.count || 0;
-                        
-                        // Retrieve additional settings
-                        chrome.storage.local.get(['weeklyLimit', 'selectedLocation'], (data) => {
-                            const weeklyLimit = data.weeklyLimit || 100; // Default to 100 if not set
-                            const locationML = data.selectedLocation || 50; // Default to 50mL if not set
-
-                            // Update water pill
-                            const { pill } = createWaterPill(weeklyParsed.count, weeklyLimit, locationML);
-
-                            // Get stored theme and apply
-                            chrome.storage.local.get('themeo', (themeData) => {
-                                const theme = themeData.themeo || 'dark';
-                                pill.classList.remove('light', 'dark', 'intrusive');
-                                pill.classList.add(theme);
-
-                                // Clear previous content and add new water pill
-                                waterPillContainer.innerHTML = '';
-                                waterPillContainer.appendChild(pill);
-                            });
-                        });
+                        chrome.storage.local.set({ 'cachedWeeklyData': weeklyResponse });
+                        updateWaterPill(weeklyParsed.count);
                     } catch (error) {
                         console.error('Error parsing weekly data:', error);
+                    }
+                }
+            });
+
+            // Retrieve stats data
+            chrome.tabs.sendMessage(tabs[0].id, 'getChatGPTStats', (statsResponse) => {
+                if (statsResponse) {
+                    try {
+                        const statsParsed = JSON.parse(statsResponse);
+                        chrome.storage.local.set({ 'cachedStatsData': statsResponse });
+                        updateStats(statsParsed);
+                        console.log("stats fetched")
+                    } catch (error) {
+                        console.error('Error parsing stats data:', error);
                     }
                 }
             });

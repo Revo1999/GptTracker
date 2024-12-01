@@ -211,6 +211,29 @@ class WaterIndicator {
   }
 }
 
+// Add start date tracking
+if (!localStorage.getItem('chatgptStartDate')) {
+  localStorage.setItem('chatgptStartDate', new Date().toISOString());
+}
+
+// Initialize weekday counts
+let weekdayCounts = {
+  Monday: 0,
+  Tuesday: 0,
+  Wednesday: 0,
+  Thursday: 0,
+  Friday: 0,
+  Saturday: 0,
+  Sunday: 0,
+  lastReset: new Date().toISOString()
+};
+
+// Load stored weekday counts from localStorage
+const storedWeekdayCounts = localStorage.getItem('chatgptWeekdayCounts');
+if (storedWeekdayCounts) {
+  weekdayCounts = JSON.parse(storedWeekdayCounts);
+}
+
 chrome.runtime.sendMessage({ type: "showNotification" }, (response) => {
   console.log(response.status);
 });
@@ -244,17 +267,40 @@ function checkAndResetWeeklyCount() {
   const now = new Date();
   const lastReset = new Date(weeklyMessageCount.lastReset);
 
-  // Calculate the most recent Monday 00:01
   const mostRecentMonday = new Date(now);
   mostRecentMonday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
   mostRecentMonday.setHours(0, 1, 0, 0);
 
-  // Reset weekly count if last reset was before this past Monday
   if (lastReset < mostRecentMonday) {
     weeklyMessageCount.count = 0;
     weeklyMessageCount.lastReset = now.toISOString();
+    // Reset weekday counts
+    weekdayCounts = {
+      Monday: 0,
+      Tuesday: 0,
+      Wednesday: 0,
+      Thursday: 0,
+      Friday: 0,
+      Saturday: 0,
+      Sunday: 0,
+      lastReset: now.toISOString()
+    };
+    localStorage.setItem('chatgptWeekdayCounts', JSON.stringify(weekdayCounts));
     localStorage.setItem('chatgptWeeklyMessageCount', JSON.stringify(weeklyMessageCount));
-    console.log('Weekly count reset.');
+    console.log('Weekly count and weekday counts reset.');
+  } else {
+    // Load existing weekday counts if not resetting
+    const storedWeekdayCounts = localStorage.getItem('chatgptWeekdayCounts');
+    if (storedWeekdayCounts) {
+      try {
+        const parsedCounts = JSON.parse(storedWeekdayCounts);
+        if (parsedCounts && typeof parsedCounts === 'object' && 'Monday' in parsedCounts) {
+          weekdayCounts = parsedCounts;
+        }
+      } catch (error) {
+        console.error('Error loading weekday counts:', error);
+      }
+    }
   }
 }
 
@@ -281,6 +327,15 @@ function updateCount() {
       window.waterIndicator.update(weeklyMessageCount.count, weeklyLimit, locationML);
     });
   }
+
+  // Add this inside updateCount(), after the weekly message count update:
+  // Update weekday count
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const currentDay = days[new Date().getDay()];
+  weekdayCounts[currentDay]++;
+  localStorage.setItem('chatgptWeekdayCounts', JSON.stringify(weekdayCounts));
+  console.log('Weekday counts updated:', weekdayCounts);
+
 }
 
 window.addEventListener('keydown', function(event) {
@@ -298,34 +353,50 @@ document.addEventListener('submit', function(event) {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message === 'getChatGPTMessageCount') {
-      const data = localStorage.getItem('chatgptMessageCount');
-      const parsedData = JSON.parse(data) || { count: 0, lastUpdated: null };
-      sendResponse(JSON.stringify({
-          count: parsedData.count,
-          lastUpdated: parsedData.lastUpdated ? new Date(parsedData.lastUpdated).getTime() : null
-      }));
+    const data = localStorage.getItem('chatgptMessageCount');
+    const parsedData = JSON.parse(data) || { count: 0, lastUpdated: null };
+    sendResponse(JSON.stringify({
+      count: parsedData.count,
+      lastUpdated: parsedData.lastUpdated ? new Date(parsedData.lastUpdated).getTime() : null
+    }));
   } else if (message === 'getChatGPTWeeklyMessageCount') {
-      const weeklyData = localStorage.getItem('chatgptWeeklyMessageCount');
-      const parsedWeeklyData = JSON.parse(weeklyData) || { count: 0, lastReset: null };
-      sendResponse(JSON.stringify({
-          count: parsedWeeklyData.count,
-          lastReset: parsedWeeklyData.lastReset ? new Date(parsedWeeklyData.lastReset).getTime() : null
-      }));
-  } else if (message === 'resetChatGPTMessageCount') {
-      const newMessageCount = { count: 0, lastUpdated: new Date().toISOString() };
-      localStorage.setItem('chatgptMessageCount', JSON.stringify(newMessageCount));
-      messageCount = newMessageCount;
-      sendResponse('Message count reset');
-  } else if (message === 'resetChatGPTWeeklyMessageCount') {
-      const newWeeklyMessageCount = { count: 0, lastReset: new Date().toISOString() };
-      localStorage.setItem('chatgptWeeklyMessageCount', JSON.stringify(newWeeklyMessageCount));
-      weeklyMessageCount = newWeeklyMessageCount;
-      sendResponse('Weekly message count reset');
-  } else if (message.action === 'changeTheme') {
-      if (window.waterIndicator) {
-          localStorage.setItem('themeo', message.theme);
-          window.waterIndicator.changeTheme(message.theme);
+    const weeklyData = localStorage.getItem('chatgptWeeklyMessageCount');
+    const parsedWeeklyData = JSON.parse(weeklyData) || { count: 0, lastReset: null };
+    sendResponse(JSON.stringify({
+      count: parsedWeeklyData.count,
+      lastReset: parsedWeeklyData.lastReset ? new Date(parsedWeeklyData.lastReset).getTime() : null
+    }));
+  } else if (message === 'getChatGPTStats') {
+    const startDate = localStorage.getItem('chatgptStartDate');
+    const weekdayData = localStorage.getItem('chatgptWeekdayCounts');
+    const weeklyData = localStorage.getItem('chatgptWeeklyMessageCount');
+    const parsedWeeklyData = JSON.parse(weeklyData) || { count: 0, lastReset: null };
+    
+    sendResponse(JSON.stringify({
+      startDate: startDate ? new Date(startDate).getTime() : null,
+      weekdayCounts: JSON.parse(weekdayData) || {},
+      usageStats: {
+        totalDays: startDate ? Math.floor((new Date() - new Date(startDate)) / (1000 * 60 * 60 * 24)) : 0,
+        weekdayDistribution: JSON.parse(weekdayData) || {},
+        avgMessagesPerDay: startDate ? 
+          (parsedWeeklyData.count / Math.max(1, Math.floor((new Date() - new Date(startDate)) / (1000 * 60 * 60 * 24)))).toFixed(2) : 0
       }
+    }));
+  } else if (message === 'resetChatGPTMessageCount') {
+    const newMessageCount = { count: 0, lastUpdated: new Date().toISOString() };
+    localStorage.setItem('chatgptMessageCount', JSON.stringify(newMessageCount));
+    messageCount = newMessageCount;
+    sendResponse('Message count reset');
+  } else if (message === 'resetChatGPTWeeklyMessageCount') {
+    const newWeeklyMessageCount = { count: 0, lastReset: new Date().toISOString() };
+    localStorage.setItem('chatgptWeeklyMessageCount', JSON.stringify(newWeeklyMessageCount));
+    weeklyMessageCount = newWeeklyMessageCount;
+    sendResponse('Weekly message count reset');
+  } else if (message.action === 'changeTheme') {
+    if (window.waterIndicator) {
+      localStorage.setItem('themeo', message.theme);
+      window.waterIndicator.changeTheme(message.theme);
+    }
   }
 });
 
