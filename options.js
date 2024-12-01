@@ -98,30 +98,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         try {
                             const stats = JSON.parse(response);
                             // Store the stats data
-                            localStorage.setItem({ 
-                                chatGPTStats: {
-                                    startDate: stats.startDate,
-                                    weekdayCounts: stats.weekdayCounts,
-                                    usageStats: stats.usageStats
-                                }
-                            });
-    
-                            // Update any stats display elements if they exist
-                            if (document.getElementById('startDate')) {
-                                document.getElementById('startDate').textContent = 
-                                    new Date(stats.startDate).toLocaleDateString();
-                            }
-                            if (document.getElementById('totalDays')) {
-                                document.getElementById('totalDays').textContent = 
-                                    stats.usageStats.totalDays;
-                            }
-                            if (document.getElementById('avgPerDay')) {
-                                document.getElementById('avgPerDay').textContent = 
-                                    stats.usageStats.avgMessagesPerDay;
-                            }
-    
+                            localStorage.setItem('chatGPTStats', JSON.stringify({
+                                startDate: stats.startDate,
+                                weekdayCounts: stats.weekdayCounts,
+                                usageStats: stats.usageStats
+                            }));
                         } catch (error) {
-                            console.error('Error parsing stats data:', error);
+                            console.error('Error storing stats:', error);
                         }
                     }
                 });

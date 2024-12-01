@@ -1,309 +1,99 @@
 <!DOCTYPE html>
-<html>   
+<html>
+
 <head>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="options.css" />
     <title>Track-GPT Settings</title>
-    <style>
-        /* Dark mode body styling */
-        body {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            font-family: 'Inter', sans-serif;
-            background-color: #1e1e1e;
-            color: #e3e3e3;
-            line-height: 1.6;
-        }
-
-        /* Main container styling */
-        .container {
-            background-color: #2c2c2f;
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.4);
-            text-align: center;
-        }
-
-        /* Headers */
-        h1 {
-            color: #e3e3e3;
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-        h2, h3 {
-            font-size: 18px;
-            font-weight: 500;
-            color: #b3b3b3;
-            margin-top: 16px;
-        }
-        h5 {
-            font-size: 14px;
-            color: #8a8a8a;
-            margin-top: 12px;
-        }
-
-        /* Stats section */
-        .stats {
-            margin-bottom: 20px;
-            padding: 16px;
-            background-color: #3a3a3d;
-            border-radius: 8px;
-            border: 1px solid #4a4a4f;
-            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Reset and Save buttons */
-        .reset-button, .save-button {
-            display: inline-block;
-            width: 220px;
-            margin: 12px;
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 500;
-            transition: background-color 0.3s;
-        }
-
-        .reset-button {
-            background-color: #e53935;
-            color: white;
-        }
-        .reset-button:hover {
-            background-color: #d32f2f;
-        }
-
-        .save-button {
-            background-color: #4CAF50;
-            color: white;
-        }
-        .save-button:hover {
-            background-color: #45a049;
-        }
-
-        /* Dropdown */
-        .location-select, .theme-select {
-            margin-top: 16px;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #4a4a4f;
-            width: 100%;
-            font-size: 15px;
-            background-color: #2c2c2f;
-            color: #e3e3e3;
-        }
-        .location-select option, .theme-select option {
-            background-color: #2c2c2f;
-            color: #e3e3e3;
-        }
-
-        /* Credits */
-        .credits {
-            font-size: 12px;
-            color: #8a8a8a;
-            margin-top: 24px;
-        }
-
-        /* Link styling */
-        a {
-            color: #8ab4f8;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-
-        /* Water limit slider */
-        #waterLimitSlider {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 10px;
-            background: #3a3a3d;
-            outline: none;
-            opacity: 0.7;
-            transition: opacity 0.2s;
-            border-radius: 5px;
-            margin: 15px 0;
-        }
-
-        #waterLimitSlider:hover {
-            opacity: 1;
-        }
-
-        #waterLimitSlider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            background: #8ab4f8;
-            cursor: pointer;
-            border-radius: 50%;
-            border: 3px solid #2c2c2f;
-            box-shadow: 0 0 6px rgba(0,0,0,0.3);
-            transition: background-color 0.3s;
-        }
-
-        #waterLimitSlider::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            background: #8ab4f8;
-            cursor: pointer;
-            border-radius: 50%;
-            border: 3px solid #2c2c2f;
-            box-shadow: 0 0 6px rgba(0,0,0,0.3);
-            transition: background-color 0.3s;
-        }
-
-        #waterLimitSlider::-webkit-slider-thumb:hover {
-            background-color: #a0c4ff;
-        }
-
-        #waterLimitSlider::-moz-range-thumb:hover {
-            background-color: #a0c4ff;
-        }
-
-        #waterLimitValue {
-            color: #e3e3e3;
-            font-size: 15px;
-            margin-top: 10px;
-        }
-
-        /* Water tracker themes */
-        .water-tracker.light {
-            background-color: #f0f0f0;
-            color: #333;
-        }
-
-        .water-tracker.dark {
-            background-color: #222;
-            color: white;
-        }
-
-        .water-tracker.intrusive {
-            background-color: #ff4c00;
-            color: #e3e3e3;
-        }
-
-        .water-tracker {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-radius: 50px;
-            padding: 10px 20px;
-            width: 300px;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .water-text {
-            font-size: 14px;
-        }
-
-        .icon-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 30px;
-            height: 30px;
-            background-color: #e1e7ff;
-            border-radius: 50%;
-            border: 2px solid white;
-        }
-
-        .icon {
-            width: 18px;
-            height: 18px;
-        }
-
-        .water-tracker-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-    </style>
 </head>
+
 <body>
-    <div class="container">
-        <h1>Track-GPT Settings</h1>
-        
-        <div class="stats">
-            <h2>Current Statistics</h2>
+    <h1 id="main-header1">
+        <span class="track-part">TrackGPT</span>
+        <span class="settings-part">SETTINGS</span>
+    </h1>
+        <div class="container">
+            <div class="item stats">
+                <h2>Current Statistics</h2>
+                
+                <h3>Total</h3>
+                <p>Water Used: <span id="water_count">0 ml</span></p>
+                <p>Messages: <span id="count">0</span></p>
+                <h5>Last Updated: <span id="lastUpdated">Never</span></h5>
+
+                <button id="resetButton" class="reset-button">Reset Total Count</button>
+                <button id="resetWeeklyButton" class="reset-button">Reset Weekly Count</button>
+            </div>
+
+
             <h3>Weekly</h3>
             <p>Water Used: <span id="weekly_water_count">0 ml</span></p>
             <p>Messages: <span id="weekly_count">0</span></p>
-            <h3>Total</h3>
-            <p>Water Used: <span id="water_count">0 ml</span></p>
-            <p>Messages: <span id="count">0</span></p>
-            <h5>Last Updated: <span id="lastUpdated">Never</span></h5>
-        </div>
 
-        <button id="resetButton" class="reset-button">Reset Total Count</button>
-        <button id="resetWeeklyButton" class="reset-button">Reset Weekly Count</button>
-        
-        <h2>Choose Location:</h2>
-        <p>
-            Please select your location from the dropdown menu below to get the most accurate water usage estimate!
-            Estimates are based on GPT-3 model data from 
-            <a href="https://arxiv.org/abs/2304.03271" target="_blank" rel="noopener noreferrer">
-                Making AI Less "Thirsty": Uncovering and Addressing the Secret Water Footprint of AI Models* (Li, Yang, Islam, Ren)
-            </a>.
-        </p>
-        
-        <select id="locationSelect" class="location-select">
-            <option value="" disabled>Select a location</option>
-            <option value="16.904">U.S Average</option>
-            <option value="12.503">Wyoming</option>
-            <option value="15.163">Iowa</option>
-            <option value="33.219">Arizona</option>
-            <option value="48.294">Washington</option>
-            <option value="11.593">Virginia</option>
-            <option value="14.009">Texas</option>
-            <option value="14.753">Singapore</option>
-            <option value="7.189">Ireland</option>
-            <option value="16.276">Netherlands</option>
-            <option value="28.856">Sweden</option>
-            <option value="23.966">Mexico</option>
-            <option value="10.585">Georgia</option>
-            <option value="14.448">Taiwan</option>
-            <option value="19.126">Australia</option>
-            <option value="19.704">India</option>
-            <option value="19.592">Indonesia</option>
-            <option value="14.794" selected>Denmark</option>
-            <option value="20.390">Finland</option>
-        </select>
+            <h2>Choose Location:</h2>
+            <p>
+                Please select your location from the dropdown menu below to get the most accurate water usage estimate!
+                Estimates are based on GPT-3 model data from
+                <a href="https://arxiv.org/abs/2304.03271" target="_blank" rel="noopener noreferrer">
+                    Making AI Less "Thirsty": Uncovering and Addressing the Secret Water Footprint of AI Models* (Li,
+                    Yang, Islam, Ren)
+                </a>.
+            </p>
 
-        <h2>Themes</h2>
-        <p>Choose the theme for the application</p>
-        <select id="themeSelect" class="theme-select">
-            <option value="intrusive" selected>Intrusive</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-        </select>
-        <p>Preview</p>
+            <select id="locationSelect" class="location-select">
+                <option value="" disabled>Select a location</option>
+                <option value="16.904">U.S Average</option>
+                <option value="12.503">Wyoming</option>
+                <option value="15.163">Iowa</option>
+                <option value="33.219">Arizona</option>
+                <option value="48.294">Washington</option>
+                <option value="11.593">Virginia</option>
+                <option value="14.009">Texas</option>
+                <option value="14.753">Singapore</option>
+                <option value="7.189">Ireland</option>
+                <option value="16.276">Netherlands</option>
+                <option value="28.856">Sweden</option>
+                <option value="23.966">Mexico</option>
+                <option value="10.585">Georgia</option>
+                <option value="14.448">Taiwan</option>
+                <option value="19.126">Australia</option>
+                <option value="19.704">India</option>
+                <option value="19.592">Indonesia</option>
+                <option value="14.794" selected>Denmark</option>
+                <option value="20.390">Finland</option>
+            </select>
 
-        <div class="water-tracker-wrapper">
-            <div id="themePreview" class="water-tracker intrusive">
-                <span class="water-text">Water consumed: 162.7 mL (34%)</span>
-                <div class="icon-container">
-                    <img src="fish.png" alt="Fish Icon" class="icon" />
+            <h2>Themes</h2>
+            <p>Choose the theme for the application</p>
+            <select id="themeSelect" class="theme-select">
+                <option value="intrusive" selected>Intrusive</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+            </select>
+            <p>Preview</p>
+
+            <div class="water-tracker-wrapper">
+                <div id="themePreview" class="water-tracker intrusive">
+                    <span class="water-text">Water consumed: 162.7 mL (34%)</span>
+                    <div class="icon-container">
+                        <img src="fish.png" alt="Fish Icon" class="icon" />
+                    </div>
                 </div>
             </div>
+
+            <br>
+            <h2>Limit</h2>
+            <p>Set your maximum water usage limit below:</p>
+            <input type="range" id="waterLimitSlider" min="0" max="50" step="1">
+            <p id="promptsAmount">10 Prompts</p>
+            <p id="waterLimitValue">1000 ml</p>
+
+            <button id="saveButton" class="save-button">Save and Refresh</button>
+
+            <p class="credits">Made by: Peter & Victor</p>
         </div>
 
-        <br>
-        <h2>Limit</h2>
-        <p>Set your maximum water usage limit below:</p>
-        <input type="range" id="waterLimitSlider" min="0" max="50" step="1">
-        <p id="promptsAmount">10 Prompts</p>
-        <p id="waterLimitValue">1000 ml</p>
-
-        <button id="saveButton" class="save-button">Save and Refresh</button>
-
-        <p class="credits">Made by: Peter & Victor</p>
-    </div>
-
-    <script src="options.js"></script>
+        <script src="options.js"></script>
 </body>
+
 </html>
