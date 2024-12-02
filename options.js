@@ -238,6 +238,77 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('themeSelect').addEventListener('change', saveTheme);
     waterLimitSlider.addEventListener('input', saveWaterLimit);
 
+// Retrieve data from local storage
+const rawData = localStorage.getItem('chatGPTStats');
+if (!rawData) {
+    alert("No data found in localStorage!");
+    throw new Error("Local storage data is missing.");
+}
+
+                    // Parse the JSON data
+                    const data = JSON.parse(rawData);
+
+                    // Get the current date
+                    const currentDate = new Date();
+
+                    // Calculate the number of days since the start date
+                    const startDate = new Date(data.startDate);
+                    const daysElapsed = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24));
+                    console.log(daysElapsed)
+                    // Avoid division by zero if the recording started today
+                    const weeksElapsed = daysElapsed / 7 || 1;
+                    console.log(weeksElapsed)
+
+                    // Calculate averages for each weekday
+                    const averageUsage = {};
+                    Object.keys(data.weekdayCounts).forEach(day => {
+                        averageUsage[day] = data.weekdayCounts[day] / weeksElapsed; // Average per week
+                    });
+
+                    // Prepare data for Chart.js
+                    const labels = Object.keys(averageUsage);
+
+                    const labelsWithoutLastReset = labels.slice(0, labels.length - 1)
+
+                    const values = Object.values(averageUsage);
+
+
+ // Create the chart
+const ctx = document.getElementById('usageChart').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labelsWithoutLastReset,
+        datasets: [{
+            label: 'Average Usage',
+            data: values, // This is the data used to calculate the bar heights
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    // Tooltip will show the exact value used to calculate the bar heights
+                    label: function(tooltipItem) {
+                        // Display the raw value used for the bar height without additional processing
+                        return tooltipItem.raw.toFixed(1); // Round to 1 decimal
+                    }
+                }
+            }
+        }
+    }
+});
+
+
+
     updateDisplay();
 });
 

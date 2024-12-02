@@ -3,6 +3,7 @@
 
 <head>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="chart.umd.js"></script>
     <link rel="stylesheet" type="text/css" href="options.css" />
     <title>Track-GPT Settings</title>
 </head>
@@ -28,6 +29,11 @@
             <p>Messages: <span id="count">0</span></p>
             <h5>Last Updated: <span id="lastUpdated">Never</span></h5>
             <button id="resetButton" class="reset-button">Reset Total Count</button>
+
+            <div id="chartContainer" style="width: 80%; margin: auto; text-align: center;">
+                <h2>Average Usage Per Weekday</h2>
+                <canvas id="usageChart" width="400" height="200"></canvas>
+            </div>
         </div>
 
         <div class="item item-3">
