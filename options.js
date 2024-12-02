@@ -79,6 +79,12 @@ document.addEventListener('DOMContentLoaded', function () {
                                 : (weeklyVolume / 1000).toFixed(2) + " L";
     
                             weeklyWaterCountElement.textContent = formattedWeeklyVolume;
+
+                            // Store the stats data
+                            localStorage.setItem('chatgptWeeklyMessageCount', JSON.stringify({
+                                count: parsedWeekly.count,
+                            }));
+
                         } catch (error) {
                             console.error('Error parsing weekly data:', error);
                             weeklyCountElement.textContent = '0';
@@ -306,6 +312,63 @@ new Chart(ctx, {
         }
     }
 });
+
+updateDisplay()
+
+// Get weekly usage and weekly limit values from localStorage
+const weeklyChatGPTCount = JSON.parse(localStorage.getItem('chatgptWeeklyMessageCount'))?.count || 0;
+console.log(weeklyChatGPTCount)
+const weeklyLimit = parseFloat(localStorage.getItem('waterLimit')) || 100; // Default to 1000 ml if no value is found
+console.log(weeklyLimit)
+// Check if the values are valid numbers
+if (isNaN(weeklyChatGPTCount) || isNaN(weeklyLimit)) {
+    console.error("Invalid values for weekly usage or weekly limit.");
+    alert("There was an issue with retrieving the data for the chart.");
+} else {
+    // Calculate the percentage of usage
+    let usagePercentage = (weeklyChatGPTCount / weeklyLimit) * 100;
+    let remainingPercentage = 100 - usagePercentage;
+    
+    // Ensure usage percentage doesn't exceed 100
+    if (usagePercentage > 100) {
+        usagePercentage = 100;
+        remainingPercentage = 0;
+    }
+
+    // Prepare the data for the Doughnut chart
+    const doughnutData = {
+        labels: ['Used', 'Remaining'],
+        datasets: [{
+            data: [usagePercentage, remainingPercentage],
+            backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(255, 99, 132, 0.2)'], // Light colors for used and remaining
+            borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'], // Darker borders for contrast
+            borderWidth: 1
+        }]
+    };
+
+    // Create the Doughnut chart
+    const ctx1 = document.getElementById('weeklyUsageChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'doughnut',
+        data: doughnutData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        // Display percentage in tooltip
+                        label: function(tooltipItem) {
+                            return tooltipItem.raw.toFixed(1) + '%'; // Show percentage with one decimal
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
 
 
 
