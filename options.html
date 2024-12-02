@@ -16,31 +16,34 @@
     <div class="container">
 
         <div class="item item-1">
-            <h1>Item 1: Weekly overview</h1>
-            <canvas id="weeklyUsageChart" width="400" height="400"></canvas>
-            <p>Water Used: <span id="weekly_water_count">0 ml</span></p>
-            <p>Messages: <span id="weekly_count">0</span></p>
-            <div><button id="resetWeeklyButton" class="reset-button">Reset Weekly Count</button></div>
+            <h1>Weekly overview</h1>
+            <div style="width: 400px; margin-bottom: 20pt;">
+                <canvas id="weeklyUsageChart"></canvas>
+            </div>
+            <p>You used <span id="weekly_count"></span> out of <span id="total_prompts"></span> prompts this week.</p>
+            <p>This required <span id="weekly_water_count"></span> of water.</p>
+            <div><button id="resetWeeklyButton" class="reset-button">Reset weekly usage</button></div>
         </div>
-        
+
         <div class="item item-2">
-            <h1>Item 2: Usage</h1>
+            <h1>Usage</h1>
             <h2>Total</h2>
             <p>Water Used: <span id="water_count">0 ml</span></p>
             <p>Messages: <span id="count">0</span></p>
             <h5>Last Updated: <span id="lastUpdated">Never</span></h5>
-            <button id="resetButton" class="reset-button">Reset Total Count</button>
 
             <div id="chartContainer" style="width: 80%; margin: auto; text-align: center;">
                 <h2>Average Usage Per Weekday</h2>
                 <canvas id="usageChart" width="400" height="200"></canvas>
             </div>
+            <button id="resetButton" class="reset-button">Delete data</button>
         </div>
 
         <div class="item item-3">
             <div class="box">
                 <div>
                     <h1>Geography</h1>
+                    <img src="" id="countryflag" alt="country flag" style="width: 35px; height: auto;">
                     <select id="locationSelect" class="location-select">
                         <option value="" disabled>Select a location</option>
                         <option value="16.904">U.S Average</option>
@@ -65,13 +68,23 @@
                     </select>
                 </div>
                 <div>
-                    <h1>Limit</h1>
-                    <p>Set your maximum water usage limit below:</p>
+                    <h1 style="margin-bottom: 0;">Weekly limit</h1>
+                    <!--<p>Set your maximum water usage limit below:</p>-->
+                    <p id="promptsAmount" style="font-size: 32px; font-weight: bold; margin: 0;"></p>
+                    <p style="margin:0">Prompts per week</p>
                     <input type="range" id="waterLimitSlider" min="0" max="50" step="1">
-                    <p id="promptsAmount">10 Prompts</p>
-                    <p id="waterLimitValue">1000 ml</p>
                 </div>
-            </div>  
+            </div>
+            <p>
+                <span id="waterInfo1" style="color: #fff;"></span>
+                <span id="waterInfo2" style="color: #007AFF;"></span>
+                use
+                <span id="waterInfo4" style="color: #007AFF;"></span>
+                each for one week, it requires
+                <br>
+                <span id="waterInfo6" style="color: #007AFF;"></span>
+            </p>
+            <!--
             <p>
                 Please select your location from the dropdown menu above to get the most accurate water usage estimate!
                 Estimates are based on GPT-3 model data from
@@ -80,11 +93,12 @@
                     Yang, Islam, Ren)
                 </a>.
             </p>
+            -->
             <button id="saveButton" class="save-button">Save and Refresh</button>
         </div>
 
         <div class="item item-4">
-            <h2>Item 4: Themes</h2>
+            <h1>Themes</h1>
             <p>Choose the theme for the application</p>
             <select id="themeSelect" class="theme-select">
                 <option value="intrusive" selected>Intrusive</option>
@@ -96,19 +110,25 @@
                 <div id="themePreview" class="water-tracker intrusive">
                     <span class="water-text">Water consumed: 162.7 mL (34%)</span>
                     <div class="icon-container">
-                        <img src="fish.png" alt="Fish Icon" class="icon" />
+                        <img src="assets/fish.png" alt="Fish Icon" class="icon" />
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="item item-5">
-            <h2>Item 5: Contact</h2>
+            <h2>Contact</h2>
             <p>For any questions or feedback, please contact us at:</p>
-            <a href="mailto:" class="email"></a>
+            <br>
+            <p>trackgptdev@gmail.com</p>
+
+            <div class="contact-flex">
+                <button id="contactButtonPersonal" class="contact-button">Personal</button>
+                <button id="contactButtonBugs" class="contact-button">Report Bugs/Issues</button>
+            </div>
         </div>
-        <p class="credits">Made by: Peter & Victor</p>
     </div>
+    <p class="credits">Made by: Peter & Victor</p>
     <script src="options.js"></script>
 </body>
 

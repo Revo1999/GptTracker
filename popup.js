@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add fish icon
         const waterIcon = document.createElement('img');
         waterIcon.className = 'fish';
-        waterIcon.src = 'upscaled.png';
+        waterIcon.src = 'assets/upscaled.png';
         waterIcon.alt = 'fish icon';
         circleContainer.appendChild(waterIcon);
         pill.appendChild(circleContainer);

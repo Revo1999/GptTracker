@@ -173,7 +173,7 @@ class WaterIndicator {
       const waterIcon = document.createElement('img');
       waterIcon.className = 'fish';
       
-      waterIcon.src = chrome.runtime.getURL('fish.png');
+      waterIcon.src = chrome.runtime.getURL('assets/fish.png');
       waterIcon.alt = 'fish icon';
       circleContainer.appendChild(waterIcon);
   }

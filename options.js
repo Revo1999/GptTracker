@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const countElement = document.getElementById('count');
     const weeklyCountElement = document.getElementById('weekly_count');
+    const totalCountElement  = document.getElementById('total_prompts')
     const watercountElement = document.getElementById('water_count');
     const weeklyWaterCountElement = document.getElementById('weekly_water_count');
     const lastUpdatedElement = document.getElementById('lastUpdated');
@@ -13,6 +14,31 @@ document.addEventListener('DOMContentLoaded', function () {
     const themeSelect = document.getElementById('themeSelect');
     const saveButton = document.getElementById('saveButton');
     const themePreview = document.getElementById('themePreview');
+    const waterFact1 = document.getElementById('waterInfo1')
+    const waterFact2 = document.getElementById('waterInfo2')
+    const waterFact3 = document.getElementById('waterInfo3')
+    const waterFact4 = document.getElementById('waterInfo4')
+    const waterFact5 = document.getElementById('waterInfo5')
+    const waterFact6 = document.getElementById('waterInfo6')
+    const flag = document.getElementById('countryflag')
+
+    function formatNumber(value) {
+        if (value >= 1e9) {
+            return (value / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
+        } else if (value >= 1e6) {
+            return (value / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+        } else {
+            return value.toFixed(0).toString();
+        }
+     }
+
+    document.getElementById('contactButtonPersonal').addEventListener('click', function() {
+        window.location.href = 'mailto:trackgptdev@gmail.com?subject=Hello TrackGPT!&body=Dear%20TrackGPT';
+    });
+
+    document.getElementById('contactButtonBugs').addEventListener('click', function() {
+        window.location.href = 'mailto:trackgptdev@gmail.com?subject=Reporting Bugs&body=Dear%20there';
+    });
 
     // Theme preview functionality
     themeSelect.addEventListener('change', function() {
@@ -167,6 +193,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function saveLocation() {
         const selectedValue = document.getElementById('locationSelect').value;
         localStorage.setItem('selectedLocation', selectedValue);
+        loadWaterLimit()
         updateDisplay();
     }
 
@@ -180,18 +207,140 @@ document.addEventListener('DOMContentLoaded', function () {
     function saveWaterLimit() {
         const waterLimit = waterLimitSlider.value;
         localStorage.setItem('waterLimit', waterLimit);
-        waterLimitValueDisplay.textContent = `${waterLimit} ml`;
         loadWaterLimit();
     }
 
     function loadWaterLimit() {
-        const savedWaterLimit = localStorage.getItem('waterLimit');
-        const location = localStorage.getItem('selectedLocation');
-        if (savedWaterLimit) {
-            waterLimitSlider.value = savedWaterLimit;
-            waterLimitValueDisplay.textContent = `${((savedWaterLimit*location*479005)/1000).toFixed(0)} liters`;
-            promptValueDisplay.textContent = `Weekly prompts: ${savedWaterLimit} `;
+        let savedWaterLimit = localStorage.getItem('waterLimit');
+        const location = parseFloat(localStorage.getItem('selectedLocation'));
+        
+        switch (location) {
+            case 16.904: //US. Average
+            country = "USA";
+            amountOfUsers = 37124732;
+            waterFact1.textContent = "If all ChatGPT users in "
+            flag.src = chrome.runtime.getURL('assets/usa.png')
+                break;
+            case 12.503: //Wyoming
+            country = "Wyoming";
+            amountOfUsers = 584057;
+            waterFact1.textContent = "If all Citizens in "
+            flag.src = chrome.runtime.getURL('assets/usa.png')
+                break;
+            case 15.163: //Iowa
+            country = "Iowa";
+            amountOfUsers = 3207004;
+            waterFact1.textContent = "If all Citizens in "
+            flag.src = chrome.runtime.getURL('assets/usa.png')
+                break;
+            case 33.219: //Arizona
+            country = "Arizona";
+            amountOfUsers = 7431344;
+            waterFact1.textContent = "If all Citizens in "
+            flag.src = chrome.runtime.getURL('assets/usa.png')
+                break;
+            case 48.294: //Washington
+            country = "Washington";
+            amountOfUsers = 7812880;
+            waterFact1.textContent = "If all Citizens in "
+            flag.src = chrome.runtime.getURL('assets/usa.png')
+                break;
+            case 11.593: //Virginia
+            country = "Virginia";
+            amountOfUsers = 8715698;
+            waterFact1.textContent = "If all Citizens in "
+            flag.src = chrome.runtime.getURL('assets/usa.png')
+                break;
+            case 14.009: // Texas
+            country = "Texas";
+            amountOfUsers = 30503301;
+            waterFact1.textContent = "If all Citizens in "
+            flag.src = chrome.runtime.getURL('assets/usa.png')
+                break;
+            case 14.753: //Singapore
+            country = "Singapore";
+            amountOfUsers = 6036900;
+            waterFact1.textContent = "If all Citizens in "
+            flag.src = chrome.runtime.getURL('assets/singapore.png')
+                break;
+            case 7.189: //Ireland
+            country = "Ireland";
+            amountOfUsers = 5380000;
+            waterFact1.textContent = "If all Citizens in "
+            flag.src = chrome.runtime.getURL('assets/ireland.png')
+                break;
+            case 16.276: //Netherlands
+            country = "Netherlands";
+            amountOfUsers = 18048058;
+            waterFact1.textContent = "If all Citizens in "
+            flag.src = chrome.runtime.getURL('assets/netherlands.png')
+                break;
+            case 28.856: //Sweden
+            country = "Sweden";
+            amountOfUsers = 10582576;
+            waterFact1.textContent = "If all Citizens in "
+            flag.src = chrome.runtime.getURL('assets/sweden.png')
+                break;
+            case 23.966://Mexico
+            country = "Mexico";
+            amountOfUsers = 130700000;
+            waterFact1.textContent = "If all Citizens in "
+            flag.src = chrome.runtime.getURL('assets/mexico.png')
+                break;
+            case 10.585://Georgia
+                country = "Georgia";
+                amountOfUsers = 3760000;
+                waterFact1.textContent = "If all Citizens in "
+                flag.src = chrome.runtime.getURL('assets/georgia.png')
+                break;
+            case 14.448://Taiwan
+                country = "Taiwan";
+                amountOfUsers = 23402804;
+                waterFact1.textContent = "If all Citizens in "
+                flag.src = chrome.runtime.getURL('assets/taiwan.png')
+                break;
+            case 19.126://Australia
+                country = "Australia";
+                amountOfUsers = 27122411;
+                waterFact1.textContent = "If all Citizens in "
+                flag.src = chrome.runtime.getURL('assets/australia.png')
+                break;
+            case 19.704://India
+            country = "India";
+            amountOfUsers = 1425775850;
+            waterFact1.textContent = "If all Citizens in "
+            flag.src = chrome.runtime.getURL('assets/india.png')
+                break;
+            case 19.592://Indonesia
+            country = "Indonesia";
+            amountOfUsers = 281600000;
+            waterFact1.textContent = "If all Citizens in "
+            flag.src = chrome.runtime.getURL('assets/indonesia.png')
+                break;
+            case 14.794://Denmark
+                country = "Denmark";
+                amountOfUsers = 479198;
+                waterFact1.textContent = "If all ChatGPT users in "
+                flag.src = chrome.runtime.getURL('assets/denmark.png')
+
+                break;
+            case 20.390: //Finland
+            country = "Finland";
+            amountOfUsers = 5603851;
+            waterFact1.textContent = "If all Citizens in "
+            flag.src = chrome.runtime.getURL('assets/finland.png')
+                break;
         }
+
+                        
+        waterLimitSlider.value = savedWaterLimit;
+        totalValue = (savedWaterLimit*location*amountOfUsers)/1000
+                
+        promptValueDisplay.textContent = `${savedWaterLimit} `;
+        totalCountElement.textContent = savedWaterLimit;
+        waterFact2.textContent = country
+        waterFact4.textContent = `${savedWaterLimit} prompts`
+        waterFact6.textContent = `${formatNumber(totalValue)} liters of water`
     }
 
     function saveTheme() {
@@ -288,8 +437,8 @@ new Chart(ctx, {
         datasets: [{
             label: 'Average Usage',
             data: values, // This is the data used to calculate the bar heights
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)', //'rgba(75, 192, 192, 0.2)'
+            borderColor: 'rgba(255, 99, 132, 1)', //'rgba(75, 192, 192, 1)'
             borderWidth: 1
         }]
     },
@@ -340,8 +489,8 @@ if (isNaN(weeklyChatGPTCount) || isNaN(weeklyLimit)) {
         labels: ['Used', 'Remaining'],
         datasets: [{
             data: [usagePercentage, remainingPercentage],
-            backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(255, 99, 132, 0.2)'], // Light colors for used and remaining
-            borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'], // Darker borders for contrast
+            backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(75, 192, 192, 0.2)'], // Light colors for used and remaining
+            borderColor: ['rgba(255, 99, 132, 1)', 'rgba(75, 192, 192, 1)'], // Darker borders for contrast
             borderWidth: 1
         }]
     };
