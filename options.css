@@ -349,7 +349,7 @@ a:hover {
     z-index: 1;
     bottom: -175%;
     left: 50%;
-    margin-left: -60px;
+    margin-left: -260px;
   
     /* Fade in tooltip */
     opacity: 0;
