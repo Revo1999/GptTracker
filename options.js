@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const waterFact4 = document.getElementById('waterInfo4')
     const waterFact6 = document.getElementById('waterInfo6')
     const flag = document.getElementById('countryflag')
+    let dchart;
 
     function formatNumber(value) {
         if (value >= 1e9) {
@@ -500,15 +501,26 @@ new Chart(ctx, {
     }
 });
 
-
-updateDisplay()
-
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === "performActionInOptions") {
+      // Execute the function in options.js
+      console.log("Action triggered in options.js");
+      
+      console.log("Display Update")
+      updateDisplay();
+      console.log("Updated Chart")
+      dchart.update();
+      ;
+    }
+  });
 // Get weekly usage and weekly limit values from localStorage
 const weeklyChatGPTCount = JSON.parse(localStorage.getItem('chatgptWeeklyMessageCount'))?.count || 0;
 console.log(weeklyChatGPTCount)
 const weeklyLimit = parseFloat(localStorage.getItem('waterLimit')) || 100; // Default to 1000 ml if no value is found
 console.log(weeklyLimit)
+
 // Check if the values are valid numbers
+
 if (isNaN(weeklyChatGPTCount) || isNaN(weeklyLimit)) {
     console.error("Invalid values for weekly usage or weekly limit.");
     alert("There was an issue with retrieving the data for the chart.");
@@ -536,7 +548,7 @@ if (isNaN(weeklyChatGPTCount) || isNaN(weeklyLimit)) {
 
     // Create the Doughnut chart
     const ctx1 = document.getElementById('weeklyUsageChart').getContext('2d');
-    new Chart(ctx1, {
+    dchart = new Chart(ctx1, {
         type: 'doughnut',
         data: doughnutData,
         options: {
@@ -557,6 +569,8 @@ if (isNaN(weeklyChatGPTCount) || isNaN(weeklyLimit)) {
         }
     });
 }
+
+
 
     updateDisplay();
 });

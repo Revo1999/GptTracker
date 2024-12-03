@@ -336,6 +336,8 @@ function updateCount() {
   localStorage.setItem('chatgptWeekdayCounts', JSON.stringify(weekdayCounts));
   console.log('Weekday counts updated:', weekdayCounts);
 
+  chrome.runtime.sendMessage({ action: "triggerFunction" });
+
 }
 
 window.addEventListener('keydown', function(event) {
