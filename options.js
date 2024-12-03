@@ -9,16 +9,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const resetWeeklyButton = document.getElementById('resetWeeklyButton');
     const selectElement = document.getElementById('locationSelect');
     const waterLimitSlider = document.getElementById('waterLimitSlider');
-    const waterLimitValueDisplay = document.getElementById('waterLimitValue');
     const promptValueDisplay = document.getElementById('promptsAmount')
     const themeSelect = document.getElementById('themeSelect');
     const saveButton = document.getElementById('saveButton');
     const themePreview = document.getElementById('themePreview');
     const waterFact1 = document.getElementById('waterInfo1')
     const waterFact2 = document.getElementById('waterInfo2')
-    const waterFact3 = document.getElementById('waterInfo3')
     const waterFact4 = document.getElementById('waterInfo4')
-    const waterFact5 = document.getElementById('waterInfo5')
     const waterFact6 = document.getElementById('waterInfo6')
     const flag = document.getElementById('countryflag')
 
