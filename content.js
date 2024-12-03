@@ -321,7 +321,7 @@ function updateCount() {
   // Update the water indicator if it exists
   if (window.waterIndicator) {
     chrome.storage.local.get(['weeklyLimit', 'selectedLocation', 'themeo'], (data) => {
-      const weeklyLimit = data.weeklyLimit || 100; // Default to 100 if not set
+      const weeklyLimit = data.weeklyLimit || 25; // Default to 100 if not set
       const locationML = data.selectedLocation; // Default to 50mL if not set
 
       window.waterIndicator.update(weeklyMessageCount.count, weeklyLimit, locationML);
@@ -418,8 +418,8 @@ function initializeObserver() {
 
           // Fetch weekly limit and selected location to calculate water consumption
           chrome.storage.local.get(['weeklyLimit', 'selectedLocation'], (data) => {
-              const weeklyLimit = data.weeklyLimit; // Default to 100 if not set
-              const locationML = data.selectedLocation; // Default to 50mL if not set
+              const weeklyLimit = isNaN(data.weeklyLimit) ? 25 : data.weeklyLimit || 25;; // Default to 25 if not set
+              const locationML = data.selectedLocation || 25; // Default to 25mL if not set
               const theme = localStorage.getItem('themeo')
               
               // Use the existing weeklyMessageCount from localStorage

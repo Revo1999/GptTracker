@@ -393,12 +393,14 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('themeSelect').addEventListener('change', saveTheme);
     waterLimitSlider.addEventListener('input', saveWaterLimit);
 
-// Retrieve data from local storage
-const rawData = localStorage.getItem('chatGPTStats');
-if (!rawData) {
-    alert("No data found in localStorage!");
-    throw new Error("Local storage data is missing.");
-}
+    // Retrieve data from local storage
+    const rawData = localStorage.getItem('chatGPTStats');
+    
+    // if the data is not there emulate savebutton click (this should only fire on first opening)
+    if (!rawData) {
+        saveButton.click();
+    }
+
 
                     // Parse the JSON data
                     const data = JSON.parse(rawData);
@@ -462,6 +464,7 @@ new Chart(ctx, {
     }
 });
 
+
 updateDisplay()
 
 // Get weekly usage and weekly limit values from localStorage
@@ -518,8 +521,6 @@ if (isNaN(weeklyChatGPTCount) || isNaN(weeklyLimit)) {
         }
     });
 }
-
-
 
     updateDisplay();
 });
