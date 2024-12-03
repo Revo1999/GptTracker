@@ -429,6 +429,66 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const newMessageCount = { count: 0, lastUpdated: new Date().toISOString() };
     localStorage.setItem('chatgptMessageCount', JSON.stringify(newMessageCount));
     messageCount = newMessageCount;
+
+                                                    // Create the new data object
+                                                    const currentDate = new Date().toISOString(); // Get the current date in ISO format
+                                                    const now = Date.now(); // Get the current timestamp
+                            
+                                                    const updatedData = {
+                                                        startDate: now, // Set current timestamp as startDate
+                                                        weekdayCounts: {
+                                                            Monday: 0,
+                                                            Tuesday: 0,
+                                                            Wednesday: 0,
+                                                            Thursday: 0,
+                                                            Friday: 0,
+                                                            Saturday: 0,
+                                                            Sunday: 0,
+                                                            lastReset: currentDate // Set current date as lastReset
+                                                        },
+                                                        usageStats: {
+                                                            totalDays: 0,
+                                                            weekdayDistribution: {
+                                                                Monday: 0,
+                                                                Tuesday: 0,
+                                                                Wednesday: 0,
+                                                                Thursday: 0,
+                                                                Friday: 0,
+                                                                Saturday: 0,
+                                                                Sunday: 0,
+                                                                lastReset: currentDate // Set current date as lastReset
+                                                            },
+                                                            avgMessagesPerDay: "0.00"
+                                                        }
+                                                    };
+                            
+                                                    console.log("data deleted")
+                            
+                                                    // Store it in localStorage
+                                                    localStorage.setItem('chatGPTStats', JSON.stringify(updatedData));
+
+
+                                                    const updatedWeekdayCounts = {
+                                                      Monday: 0,
+                                                      Tuesday: 0,
+                                                      Wednesday: 0,
+                                                      Thursday: 0,
+                                                      Friday: 0,
+                                                      Saturday: 0,
+                                                      Sunday: 0,
+                                                      lastReset: new Date().toISOString() // Update lastReset to the current date and time
+                                                  };
+                                                  
+                                                  // Store the updated object in localStorage
+                                                  localStorage.setItem('chatgptWeekdayCounts', JSON.stringify(updatedWeekdayCounts));
+                                                  
+                                                  // Log the update
+                                                  console.log('Weekday counts reset to zero');
+
+                                                    const newWeeklyMessageCount = { count: 0, lastReset: new Date().toISOString() };
+                                                    localStorage.setItem('chatgptWeeklyMessageCount', JSON.stringify(newWeeklyMessageCount));
+                                                    weeklyMessageCount = newWeeklyMessageCount;
+                                                    sendResponse('Weekly message count reset');
     sendResponse('Message count reset');
   } else if (message === 'resetChatGPTWeeklyMessageCount') {
     const newWeeklyMessageCount = { count: 0, lastReset: new Date().toISOString() };

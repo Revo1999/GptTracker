@@ -155,12 +155,51 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (chatGPTTabs.length > 0) {
                     const tab = chatGPTTabs[0];
 
+                                          
+                                                // Create the new data object
+                                                const currentDate = new Date().toISOString(); // Get the current date in ISO format
+                                                const now = Date.now(); // Get the current timestamp
+                        
+                                                const updatedData = {
+                                                    startDate: now, // Set current timestamp as startDate
+                                                    weekdayCounts: {
+                                                        Monday: 0,
+                                                        Tuesday: 0,
+                                                        Wednesday: 0,
+                                                        Thursday: 0,
+                                                        Friday: 0,
+                                                        Saturday: 0,
+                                                        Sunday: 0,
+                                                        lastReset: currentDate // Set current date as lastReset
+                                                    },
+                                                    usageStats: {
+                                                        totalDays: 0,
+                                                        weekdayDistribution: {
+                                                            Monday: 0,
+                                                            Tuesday: 0,
+                                                            Wednesday: 0,
+                                                            Thursday: 0,
+                                                            Friday: 0,
+                                                            Saturday: 0,
+                                                            Sunday: 0,
+                                                            lastReset: currentDate // Set current date as lastReset
+                                                        },
+                                                        avgMessagesPerDay: "0.00"
+                                                    }
+                                                };
+                        
+                                                console.log("data deleted")
+                        
+                                                // Store it in localStorage
+                                                localStorage.setItem('chatGPTStats', JSON.stringify(updatedData));
+
                     chrome.tabs.sendMessage(tab.id, 'resetChatGPTMessageCount', (response) => {
                         if (chrome.runtime.lastError) {
                             console.error(chrome.runtime.lastError);
                             return;
                         }
                         updateDisplay();
+                        location.reload();
                     });
                 }
             });
