@@ -339,17 +339,60 @@ function updateCount() {
 }
 
 window.addEventListener('keydown', function(event) {
-  console.log('Key pressed:', event.key);
   if (event.key === 'Enter' && !event.shiftKey) {
-    console.log('Enter pressed without shift!');
     updateCount();
   }
 }, true);
 
-document.addEventListener('submit', function(event) {
-  console.log('Form submitted!');
-  updateCount();
-}, true);
+      // Debounce function to delay the execution of updateCount
+      let debounceTimeout;
+
+      function debounceUpdateCount() {
+          // Clear the previous timeout if the function is called again before the delay
+          clearTimeout(debounceTimeout);
+
+          // Set a new timeout to call updateCount after 300ms (you can adjust the time)
+          debounceTimeout = setTimeout(function() {
+              updateCount();  // Execute the function after the specified delay
+          }, 300);  // Delay in milliseconds (e.g., 300ms)
+      }
+
+      // Funktion til at tilføje click event listener, når knappen er aktiveret
+      function addClickListenerIfEnabled(sendButton) {
+          if (sendButton && !sendButton.disabled) {
+              sendButton.addEventListener('click', function() {
+                  console.log('Button clicked!');
+                  debounceUpdateCount();  // Call the debounced function instead of updateCount directly
+              });
+          }
+      }
+
+      // Vent på, at DOM'en er fuldt indlæst
+      document.addEventListener('DOMContentLoaded', function() {
+          // Brug MutationObserver til at observere ændringer i DOM'en
+          const observer = new MutationObserver(function(mutationsList) {
+              for (let mutation of mutationsList) {
+                  if (mutation.type === 'childList') {
+                      // Tjek om knappen er blevet tilføjet
+                      const sendButton = document.querySelector('[data-testid="send-button"]');
+                      if (sendButton) {
+                          // Når knappen er tilføjet, tilføj event listeneren, hvis den er aktiveret
+                          addClickListenerIfEnabled(sendButton);
+                      }
+                  }
+              }
+          });
+
+          // Sørg for, at vi observerer et gyldigt container-element
+          const container = document.body; // Eller et andet container-element
+          if (container) {
+              observer.observe(container, { childList: true, subtree: true });
+          } else {
+              console.error('Container element not found!');
+          }
+      });
+
+
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message === 'getChatGPTMessageCount') {
@@ -418,7 +461,7 @@ function initializeObserver() {
 
           // Fetch weekly limit and selected location to calculate water consumption
           chrome.storage.local.get(['weeklyLimit', 'selectedLocation'], (data) => {
-              const weeklyLimit = isNaN(data.weeklyLimit) ? 25 : data.weeklyLimit || 25;; // Default to 25 if not set
+              const weeklyLimit = isNaN(data.weeklyLimit) ? 25 : data.weeklyLimit || 25; // Default to 25 if not set
               const locationML = data.selectedLocation || 25; // Default to 25mL if not set
               const theme = localStorage.getItem('themeo')
               
