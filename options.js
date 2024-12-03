@@ -224,97 +224,97 @@ document.addEventListener('DOMContentLoaded', function () {
             case 12.503: //Wyoming
             country = "Wyoming";
             amountOfUsers = 584057;
-            waterFact1.textContent = "If all Citizens in "
+            waterFact1.textContent = "If all citizens in "
             flag.src = chrome.runtime.getURL('assets/usa.png')
                 break;
             case 15.163: //Iowa
             country = "Iowa";
             amountOfUsers = 3207004;
-            waterFact1.textContent = "If all Citizens in "
+            waterFact1.textContent = "If all citizens in "
             flag.src = chrome.runtime.getURL('assets/usa.png')
                 break;
             case 33.219: //Arizona
             country = "Arizona";
             amountOfUsers = 7431344;
-            waterFact1.textContent = "If all Citizens in "
+            waterFact1.textContent = "If all citizens in "
             flag.src = chrome.runtime.getURL('assets/usa.png')
                 break;
             case 48.294: //Washington
             country = "Washington";
             amountOfUsers = 7812880;
-            waterFact1.textContent = "If all Citizens in "
+            waterFact1.textContent = "If all citizens in "
             flag.src = chrome.runtime.getURL('assets/usa.png')
                 break;
             case 11.593: //Virginia
             country = "Virginia";
             amountOfUsers = 8715698;
-            waterFact1.textContent = "If all Citizens in "
+            waterFact1.textContent = "If all citizens in "
             flag.src = chrome.runtime.getURL('assets/usa.png')
                 break;
             case 14.009: // Texas
             country = "Texas";
             amountOfUsers = 30503301;
-            waterFact1.textContent = "If all Citizens in "
+            waterFact1.textContent = "If all citizens in "
             flag.src = chrome.runtime.getURL('assets/usa.png')
                 break;
             case 14.753: //Singapore
             country = "Singapore";
             amountOfUsers = 6036900;
-            waterFact1.textContent = "If all Citizens in "
+            waterFact1.textContent = "If all citizens in "
             flag.src = chrome.runtime.getURL('assets/singapore.png')
                 break;
             case 7.189: //Ireland
             country = "Ireland";
             amountOfUsers = 5380000;
-            waterFact1.textContent = "If all Citizens in "
+            waterFact1.textContent = "If all citizens in "
             flag.src = chrome.runtime.getURL('assets/ireland.png')
                 break;
             case 16.276: //Netherlands
             country = "Netherlands";
             amountOfUsers = 18048058;
-            waterFact1.textContent = "If all Citizens in "
+            waterFact1.textContent = "If all citizens in "
             flag.src = chrome.runtime.getURL('assets/netherlands.png')
                 break;
             case 28.856: //Sweden
             country = "Sweden";
             amountOfUsers = 10582576;
-            waterFact1.textContent = "If all Citizens in "
+            waterFact1.textContent = "If all citizens in "
             flag.src = chrome.runtime.getURL('assets/sweden.png')
                 break;
             case 23.966://Mexico
             country = "Mexico";
             amountOfUsers = 130700000;
-            waterFact1.textContent = "If all Citizens in "
+            waterFact1.textContent = "If all citizens in "
             flag.src = chrome.runtime.getURL('assets/mexico.png')
                 break;
             case 10.585://Georgia
                 country = "Georgia";
                 amountOfUsers = 3760000;
-                waterFact1.textContent = "If all Citizens in "
+                waterFact1.textContent = "If all citizens in "
                 flag.src = chrome.runtime.getURL('assets/georgia.png')
                 break;
             case 14.448://Taiwan
                 country = "Taiwan";
                 amountOfUsers = 23402804;
-                waterFact1.textContent = "If all Citizens in "
+                waterFact1.textContent = "If all citizens in "
                 flag.src = chrome.runtime.getURL('assets/taiwan.png')
                 break;
             case 19.126://Australia
                 country = "Australia";
                 amountOfUsers = 27122411;
-                waterFact1.textContent = "If all Citizens in "
+                waterFact1.textContent = "If all citizens in "
                 flag.src = chrome.runtime.getURL('assets/australia.png')
                 break;
             case 19.704://India
             country = "India";
             amountOfUsers = 1425775850;
-            waterFact1.textContent = "If all Citizens in "
+            waterFact1.textContent = "If all citizens in "
             flag.src = chrome.runtime.getURL('assets/india.png')
                 break;
             case 19.592://Indonesia
             country = "Indonesia";
             amountOfUsers = 281600000;
-            waterFact1.textContent = "If all Citizens in "
+            waterFact1.textContent = "If all citizens in "
             flag.src = chrome.runtime.getURL('assets/indonesia.png')
                 break;
             case 14.794://Denmark
@@ -327,7 +327,7 @@ document.addEventListener('DOMContentLoaded', function () {
             case 20.390: //Finland
             country = "Finland";
             amountOfUsers = 5603851;
-            waterFact1.textContent = "If all Citizens in "
+            waterFact1.textContent = "If all citizens in "
             flag.src = chrome.runtime.getURL('assets/finland.png')
                 break;
         }

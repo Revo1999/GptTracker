@@ -20,20 +20,19 @@
             <div style="width: 400px; margin-bottom: 20pt;">
                 <canvas id="weeklyUsageChart"></canvas>
             </div>
-            <p>You used <span id="weekly_count"></span> out of <span id="total_prompts"></span> prompts this week.</p>
-            <p>This required <span id="weekly_water_count"></span> of water.</p>
+            <p style="margin-bottom: 0;">You used <span id="weekly_count"></span> out of <span id="total_prompts"></span> prompts this week.</p>
+            <p style="margin-top: 0;">This required <span id="weekly_water_count"></span> of water.</p>
             <div><button id="resetWeeklyButton" class="reset-button">Reset weekly usage</button></div>
         </div>
 
         <div class="item item-2">
-            <h1>Usage</h1>
-            <h2>Total</h2>
-            <p>Water Used: <span id="water_count">0 ml</span></p>
-            <p>Messages: <span id="count">0</span></p>
+            <h1>Usage stats</h1>
+            <p>Total prompts: <span id="count">0</span></p>
+            <p>Total water required: <span id="water_count">0 ml</span></p>
             <h5>Last Updated: <span id="lastUpdated">Never</span></h5>
 
             <div id="chartContainer" style="width: 80%; margin: auto; text-align: center;">
-                <h2>Average Usage Per Weekday</h2>
+                <h2>Average usage per weekday</h2>
                 <canvas id="usageChart" width="400" height="200"></canvas>
             </div>
             <button id="resetButton" class="reset-button">Delete data</button>
@@ -70,7 +69,7 @@
                 <div>
                     <h1 style="margin-bottom: 0;">Weekly limit</h1>
                     <!--<p>Set your maximum water usage limit below:</p>-->
-                    <p id="promptsAmount" style="font-size: 32px; font-weight: bold; margin: 0;"></p>
+                    <p id="promptsAmount" style="font-size: 32px; font-weight: bold; margin-bottom: 0; margin-top: 12px;"></p>
                     <p style="margin:0">Prompts per week</p>
                     <input type="range" id="waterLimitSlider" min="0" max="50" step="1">
                 </div>
@@ -80,8 +79,7 @@
                 <span id="waterInfo2" style="color: #007AFF;"></span>
                 use
                 <span id="waterInfo4" style="color: #007AFF;"></span>
-                each for one week, it requires
-                <br>
+                each for one week, <br> it requires
                 <span id="waterInfo6" style="color: #007AFF;"></span>
             </p>
             <!--
@@ -99,13 +97,13 @@
 
         <div class="item item-4">
             <h1>Themes</h1>
-            <p>Choose the theme for the application</p>
+            <p style="margin-top: 0;">Choose the theme for the application:</p>
             <select id="themeSelect" class="theme-select">
                 <option value="intrusive" selected>Intrusive</option>
                 <option value="light">Light</option>
                 <option value="dark">Dark</option>
             </select>
-            <p>Preview</p>
+            <p style="margin-top: 50px;">Preview:</p>
             <div class="water-tracker-wrapper">
                 <div id="themePreview" class="water-tracker intrusive">
                     <span class="water-text">Water consumed: 162.7 mL (34%)</span>
@@ -118,9 +116,8 @@
 
         <div class="item item-5">
             <h2>Contact</h2>
-            <p>For any questions or feedback, please contact us at:</p>
-            <br>
-            <p>trackgptdev@gmail.com</p>
+            <p style="margin-bottom: 0%;">For any questions or feedback, please contact us at:</p>
+            <p style="margin-bottom: 20pt;">trackgptdev@gmail.com</p>
 
             <div class="contact-flex">
                 <button id="contactButtonPersonal" class="contact-button">Personal</button>
