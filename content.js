@@ -354,7 +354,7 @@ window.addEventListener('keydown', function(event) {
           // Set a new timeout to call updateCount after 300ms (you can adjust the time)
           debounceTimeout = setTimeout(function() {
               updateCount();  // Execute the function after the specified delay
-          }, 300);  // Delay in milliseconds (e.g., 300ms)
+          }, 900);  // Delay in milliseconds (e.g., 300ms)
       }
 
       // Funktion til at tilføje click event listener, når knappen er aktiveret
