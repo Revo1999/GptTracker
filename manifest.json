@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Track-GPT",
+  "name": "TrackGPT",
   "version": "1.0",
-  "description": "Counts messages sent to ChatGPT",
+  "description": "Counts ChatGPT messages and tracks water usage",
   "permissions": [
     "activeTab",
     "scripting",
