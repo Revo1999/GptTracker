@@ -420,6 +420,7 @@ document.addEventListener('DOMContentLoaded', function () {
         loadWaterLimit();
         loadTheme();
         saveLocation();
+        initializeChart()
 
         chrome.storage.local.set({ weeklyLimit: localStorage.getItem('waterLimit') });
         chrome.storage.local.set({ locationSelected: localStorage.getItem('selectedLocation') });
@@ -501,30 +502,20 @@ new Chart(ctx, {
     }
 });
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.action === "performActionInOptions") {
-      // Execute the function in options.js
-      console.log("Action triggered in options.js");
-      
-      console.log("Display Update")
-      updateDisplay();
-      console.log("Updated Chart")
-      dchart.update();
-      ;
+function getChartData() {
+    // Get weekly usage and weekly limit values from localStorage
+    const weeklyChatGPTCount = JSON.parse(localStorage.getItem('chatgptWeeklyMessageCount'))?.count || 0;
+    console.log(weeklyChatGPTCount)
+    const weeklyLimit = parseFloat(localStorage.getItem('waterLimit')) || 100; // Default to 100 ml if no value is found
+    console.log(weeklyLimit)
+
+    // Check if the values are valid numbers
+    if (isNaN(weeklyChatGPTCount) || isNaN(weeklyLimit)) {
+        console.error("Invalid values for weekly usage or weekly limit.");
+        alert("There was an issue with retrieving the data for the chart.");
+        return null;
     }
-  });
-// Get weekly usage and weekly limit values from localStorage
-const weeklyChatGPTCount = JSON.parse(localStorage.getItem('chatgptWeeklyMessageCount'))?.count || 0;
-console.log(weeklyChatGPTCount)
-const weeklyLimit = parseFloat(localStorage.getItem('waterLimit')) || 100; // Default to 1000 ml if no value is found
-console.log(weeklyLimit)
 
-// Check if the values are valid numbers
-
-if (isNaN(weeklyChatGPTCount) || isNaN(weeklyLimit)) {
-    console.error("Invalid values for weekly usage or weekly limit.");
-    alert("There was an issue with retrieving the data for the chart.");
-} else {
     // Calculate the percentage of usage
     let usagePercentage = (weeklyChatGPTCount / weeklyLimit) * 100;
     let remainingPercentage = 100 - usagePercentage;
@@ -536,39 +527,64 @@ if (isNaN(weeklyChatGPTCount) || isNaN(weeklyLimit)) {
     }
 
     // Prepare the data for the Doughnut chart
-    const doughnutData = {
+    return {
         labels: ['Used', 'Remaining'],
         datasets: [{
             data: [usagePercentage, remainingPercentage],
-            backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(75, 192, 192, 0.2)'], // Light colors for used and remaining
-            borderColor: ['rgba(255, 99, 132, 1)', 'rgba(75, 192, 192, 1)'], // Darker borders for contrast
+            backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(75, 192, 192, 0.2)'],
+            borderColor: ['rgba(255, 99, 132, 1)', 'rgba(75, 192, 192, 1)'],
             borderWidth: 1
         }]
     };
+}
 
-    // Create the Doughnut chart
-    const ctx1 = document.getElementById('weeklyUsageChart').getContext('2d');
-    dchart = new Chart(ctx1, {
-        type: 'doughnut',
-        data: doughnutData,
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top'
-                },
-                tooltip: {
-                    callbacks: {
-                        // Display percentage in tooltip
-                        label: function(tooltipItem) {
-                            return tooltipItem.raw.toFixed(1) + '%'; // Show percentage with one decimal
+function initializeChart() {
+    const chartData = getChartData();
+    if (chartData) {
+        const ctx1 = document.getElementById('weeklyUsageChart').getContext('2d');
+        dchart = new Chart(ctx1, {
+            type: 'doughnut',
+            data: chartData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            // Display percentage in tooltip
+                            label: function(tooltipItem) {
+                                return tooltipItem.raw.toFixed(1) + '%'; // Show percentage with one decimal
+                            }
                         }
                     }
                 }
             }
-        }
-    });
+        });
+    }
 }
+
+// Message listener
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === "performActionInOptions") {
+        console.log("Action triggered in options.js");
+        updateDisplay(); // Ensure this function is defined
+        
+        if (dchart) {
+            const newChartData = getChartData();
+            if (newChartData) {
+                dchart.data = newChartData;
+                dchart.update();
+            }
+        } else {
+            initializeChart(); // Initialize chart if not already created
+        }
+    }
+});
+
+// Initialize chart when the script loads
+document.addEventListener('DOMContentLoaded', initializeChart);
 
 
 
