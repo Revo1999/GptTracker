@@ -439,7 +439,6 @@ document.addEventListener('DOMContentLoaded', function () {
         saveButton.click();
     }
 
-
                     // Parse the JSON data
                     const data = JSON.parse(rawData);
 
@@ -447,7 +446,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     const currentDate = new Date();
 
                     // Calculate the number of days since the start date
-                    const startDate = new Date(data.startDate);
+
+                    let startDate = new Date(data.startDate) || 0;
+                    console.log(startDate)
                     const daysElapsed = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24));
                     console.log(daysElapsed)
                     // Avoid division by zero if the recording started today
@@ -466,7 +467,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const labelsWithoutLastReset = labels.slice(0, labels.length - 1)
 
                     const values = Object.values(averageUsage);
-
+                
 
  // Create the chart
 const ctx = document.getElementById('usageChart').getContext('2d');
@@ -500,9 +501,12 @@ new Chart(ctx, {
             }
         }
     }
+    
 });
 
 function getChartData() {
+    updateDisplay()
+
     // Get weekly usage and weekly limit values from localStorage
     const weeklyChatGPTCount = JSON.parse(localStorage.getItem('chatgptWeeklyMessageCount'))?.count || 0;
     console.log(weeklyChatGPTCount)
@@ -539,6 +543,7 @@ function getChartData() {
 }
 
 function initializeChart() {
+    updateDisplay();
     const chartData = getChartData();
     if (chartData) {
         const ctx1 = document.getElementById('weeklyUsageChart').getContext('2d');
@@ -572,13 +577,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         updateDisplay(); // Ensure this function is defined
         
         if (dchart) {
-            const newChartData = getChartData();
-            if (newChartData) {
+            // Slight delay to ensure localStorage is updated
+            setTimeout(() => {
+                const newChartData = getChartData();
                 dchart.data = newChartData;
                 dchart.update();
-            }
+            }, 1000);
         } else {
-            initializeChart(); // Initialize chart if not already created
+            initializeChart();
         }
     }
 });

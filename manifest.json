@@ -5,9 +5,7 @@
   "description": "Counts ChatGPT messages and tracks water usage",
   "permissions": [
     "activeTab",
-    "scripting",
-    "storage",
-    "notifications"
+    "storage"
   ],
   "background": {
     "service_worker": "background.js"

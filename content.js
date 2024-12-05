@@ -322,7 +322,7 @@ function updateCount() {
   if (window.waterIndicator) {
     chrome.storage.local.get(['weeklyLimit', 'selectedLocation', 'themeo'], (data) => {
       const weeklyLimit = data.weeklyLimit || 25; // Default to 100 if not set
-      const locationML = data.selectedLocation; // Default to 50mL if not set
+      const locationML = data.selectedLocation || 14.794; // Default to 50mL if not set
 
       window.waterIndicator.update(weeklyMessageCount.count, weeklyLimit, locationML);
     });
